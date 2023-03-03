@@ -44,7 +44,7 @@ This section describes the technologies used within this project. From framework
 - Mongoose: <a href="https://www.npmjs.com/package/mongoose">mongoose</a>
 - Jest: <a href="https://www.npmjs.com/package/jest">jest</a>
 
-> <h2 id="api_routes">🗺️ API Routes<h2>
+> <h2 id="api_routes">🗺️ API Routes<h2><br>
 This section describes the available routes within the project, expected input and return values.
 
 
