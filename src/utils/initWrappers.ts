@@ -16,9 +16,8 @@ const initWrappers = async (wallet: Keypair, env: string, honeyProgramId: string
     const provider = new anchor.AnchorProvider(connection, walletWrapper, anchor.AnchorProvider.defaultOptions());
 
     const client: HoneyClient = await HoneyClient.connect(provider, honeyProgramId, env === 'devnet');
-    console.log('@@-- market', marketPkString);
+
     const marketPk = new PublicKey(marketPkString);
-    // TODO: fails here
     const market: HoneyMarket = await HoneyMarket.load(client, marketPk);
     
     const reserves: HoneyReserve[] = market.reserves.map(
