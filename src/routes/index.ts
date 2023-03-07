@@ -19,9 +19,7 @@ router
 */
 router 
   .route('/bids/:marketId')
-  .get(async (req, res) => {
-    res.send('render bids for specific market id')
-  });
+  .get(handleSingleMarketBids);
 /**
  * @description 404 route
  * @params none

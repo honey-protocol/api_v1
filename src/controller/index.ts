@@ -1,27 +1,35 @@
 import {Request, Response, NextFunction } from 'express';
-import { fetchAllBidsOnChain } from '../helpers';
-
+import { fetchAllBidsOnChain, fetchBidsOnChain } from '../helpers';
+import { PublicKey } from "@solana/web3.js";
+/**
+ * @description
+ * @params
+ * @return
+*/
 const handleAllMarketsBids = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const bids = await fetchAllBidsOnChain();
-    // add data to object
-    return res.json(bids) 
+    // TODO: create custom response object
+    res.json(bids);
   } catch (error) {
-    next(error);
+    console.log(`Error fetching bids for all markets: ${error}`);
+    res.json([]);
   }
 }
-
+/**
+ * @description
+ * @params
+ * @return
+*/
 const handleSingleMarketBids = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    return res.json({
-      status: res.status,
-      data: {
-        operation: 'Success',
-        tx: 'tx string'
-      }
-    })
+    const bids = await fetchBidsOnChain(new PublicKey(req.params.marketId));
+    // TODO: create custom response object
+    res.json(bids);
   } catch (error) {
-    
+    console.log(`Error fetching bids for market: ${error}`);
+
+    res.json([]);
   }
 }
 

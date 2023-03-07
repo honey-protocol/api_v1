@@ -4,17 +4,23 @@ import { HoneyClient, HoneyMarket, HoneyReserve, HoneyUser } from "@honey-financ
 import NodeWallet from "@project-serum/anchor/dist/cjs/nodewallet";
 import { CLUSTERS } from "../constants";
 
-export async function initWrappers(wallet: Keypair, env: string, honeyProgramId: string, marketPkString: string) {
+const initWrappers = async (wallet: Keypair, env: string, honeyProgramId: string, marketPkString: string) => {
+
     const mainnetConn = new Connection(
         CLUSTERS[0].url
     );
     const connection = env === 'devnet' ? new Connection("https://api.devnet.solana.com") : mainnetConn;
     // console.log('initting wrappers for market', marketPkString);
+
     const walletWrapper = new NodeWallet(wallet);
     const provider = new anchor.AnchorProvider(connection, walletWrapper, anchor.AnchorProvider.defaultOptions());
+
     const client: HoneyClient = await HoneyClient.connect(provider, honeyProgramId, env === 'devnet');
+    console.log('@@-- market', marketPkString);
     const marketPk = new PublicKey(marketPkString);
+    // TODO: fails here
     const market: HoneyMarket = await HoneyMarket.load(client, marketPk);
+    
     const reserves: HoneyReserve[] = market.reserves.map(
         (reserve) =>  new HoneyReserve(client, market, reserve.reserve)
     ).filter(reserve => !reserve.reserve.equals(PublicKey.default));
@@ -27,3 +33,5 @@ export async function initWrappers(wallet: Keypair, env: string, honeyProgramId:
     // console.log('initting finished!');
     return { client, market, user, reserves, provider }
 }
+
+export {initWrappers}

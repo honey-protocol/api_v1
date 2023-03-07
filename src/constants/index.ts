@@ -3,7 +3,6 @@ import { clusterApiUrl, PublicKey } from "@solana/web3.js";
 import dotenv from "dotenv";
 const config = dotenv.config();
 const DEFAULT_MAINNET_CLUSTER = process.env.DEFAULT_MAINNET_CLUSTER || '';
-console.log('@@-- default mainnet cluster', DEFAULT_MAINNET_CLUSTER)
 const MAINNET_RPC_ENDPOINT = config.parsed ? config.parsed.MAINNET_RPC_ENDPOINT : DEFAULT_MAINNET_CLUSTER;
 
 export const HONEY_PROGRAM_ID = new PublicKey(

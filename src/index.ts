@@ -1,13 +1,20 @@
 import express from 'express';
+import { initProgram } from './helpers';
 require('dotenv').config();
 import { router } from './routes/index';
+
+// TODO: add middleware security | 
 
 // port either from env. or default to 1337
 const PORT = process.env.PORT || 1337;
 const app = express();
 
-// set router
+// init router
 app.use('/', router);
+
+initProgram().then((result) => {
+  console.log('@@-- finished', result)
+})
 
 // init server
 app.listen(PORT, () => {

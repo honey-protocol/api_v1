@@ -3,8 +3,23 @@ import { loadWalletKey, loadHoneyProgram,  fetchMarketReserveInfo, fetchReserve 
 import { HONEY_MARKET_IDS, HONEY_PROGRAM_ID } from '../constants';
 var keypairPath = './keypair.json';
 import { initWrappers } from '../utils/initWrappers';
-import { Keypair } from '@solana/web3.js';
+import { Keypair, PublicKey } from '@solana/web3.js';
+import {findBidAccount} from './web3';
+import { BN } from '@project-serum/anchor';
+import cron from 'node-cron';
 
+
+// Common imports for dialect
+import {
+    AddressType,
+    Dapp,
+    Dialect,
+    DialectCloudEnvironment,
+    DialectSdk,
+    Thread,
+} from '@dialectlabs/sdk';
+import { initLiquidation } from './liquidation';
+// TODO: switch to devnet for local testing
 const cluster = 'mainnet-beta'; //mainnet-beta, devnet, testnet
 let wallet: Keypair;
 let program: any;
@@ -14,13 +29,13 @@ const loadMarkets = async (): Promise<HoneyMarket[]> => {
     wallet = loadWalletKey(keypairPath);
     program = await loadHoneyProgram(wallet, cluster);
 
-    console.log('loading markets')
+    console.log('loading markets');
 
     for(let i = 0; i < HONEY_MARKET_IDS.length; i++) {
         const { market } = await initWrappers(wallet, cluster, HONEY_PROGRAM_ID.toString(), HONEY_MARKET_IDS[i].toString());
         markets.push(market);
     }
-
+    console.log('finished loading markets');
     return markets;
 }
 
@@ -40,9 +55,102 @@ const fetchAllBidsOnChain = async () => {
             bids.push(bid);
         }
     }
+    return bids
+}
+
+/**
+ * @description fetchs all bids in the same market, 
+ * filters out with greater bidLimit 
+ * and sends the dialect message to the next higher bid
+ * @params
+ * bid: public key of bid account
+ * bid_limit: bidLimit value of bid account
+*/
+const checkForOutbid = async (bid: string, bid_limit: string, dapp: Dapp) => {
+    const market_id = await findMarketOfBid(HONEY_MARKET_IDS, bid);
+    if (!market_id) return;
+
+    let bids = (await fetchBidsOnChain(new PublicKey(market_id))).filter((item) => {
+        return new BN(item.bidLimit).lt(new BN(bid_limit))
+    }).sort((a, b) => b.bidLimit - a.bidLimit);
+
+    if(bids.length > 0) {
+        const outbid = bids[0]
+        const title = 'Honey Finance';
+        await dapp.messages.send({
+            title,
+            message: "You have been outbid",
+            recipient: outbid.bidder
+        });
+    }
+}
+
+
+const fetchBidsOnChain = async(market_id: PublicKey) => {
+    let bids = [];
+    const allBids = await program.account.bid.all();
+    
+    for(const v of allBids) {
+        const bid = {
+            bid: v.publicKey.toString(),
+            bidder: v.account.bidder.toString(),
+            bidLimit: v.account.bidLimit.toString()
+        };
+        const bidAccountInfo = await program.provider.connection.getAccountInfo(v.publicKey)
+        if(bidAccountInfo) {
+
+            const bidForMarket = (await findBidAccount(market_id, new PublicKey(bid.bidder))).address.toString();
+            if(bid.bid == bidForMarket) {
+                bids.push(bid);
+            }
+        }
+
+    }
     return bids;
 }
 
 
+const findMarketOfBid = async (market_ids: PublicKey[], bid: string) => {
+    const bid_account = await program.account.bid.fetch(bid);
 
-export { fetchAllBidsOnChain }
+    const bid_obj = {
+        bid,
+        bidder: bid_account.bidder.toString(),
+        bidLimit: bid_account.bidLimit.toString()
+    };
+    for(const market_id of market_ids) {
+        const bidForMarket = (await findBidAccount(market_id, new PublicKey(bid_obj.bidder))).address.toString();
+        if(bid_obj.bid == bidForMarket) {
+            return market_id;
+        }
+    }
+    return null;
+}
+
+const initProgram = async () => {
+    console.log('@@-- first log init program')
+    // call loadmarkets
+    loadMarkets().then((markets) => {
+        console.log('@@-- coming here')
+        cron.schedule('*/2 * * * *', async () => {
+            console.log('@@-- should not be empty', wallet, program)
+            initLiquidation(markets, wallet, program).catch(e => {
+                console.log(`Error executing liquidation: ${e}`);
+        });
+      });
+    });
+
+    // call init liq.
+    // call init dialect
+    //     loadMarkets().then((markets) => {
+    //     cron.schedule('*/2 * * * *', async () => {
+    //         initLiquidation(markets).catch(e => {
+    //           console.log('error executing liquidation', e);
+    //         });
+    //       });
+    // })
+}
+
+
+
+export { fetchAllBidsOnChain, fetchBidsOnChain, loadMarkets, checkForOutbid, initProgram, findMarketOfBid }
