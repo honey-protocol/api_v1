@@ -19,6 +19,7 @@ import {
     Thread,
 } from '@dialectlabs/sdk';
 import { initLiquidation } from './liquidation';
+import { initDialectListeners } from './dialect';
 // TODO: switch to devnet for local testing
 const cluster = 'mainnet-beta'; //mainnet-beta, devnet, testnet
 let wallet: Keypair;
@@ -128,27 +129,22 @@ const findMarketOfBid = async (market_ids: PublicKey[], bid: string) => {
 }
 
 const initProgram = async () => {
-    console.log('@@-- first log init program')
+    console.log('@@-- program being initalised')
     // call loadmarkets
     loadMarkets().then((markets) => {
-        console.log('@@-- coming here')
+        console.log('@@-- loading markets', wallet, program)
         cron.schedule('*/2 * * * *', async () => {
-            console.log('@@-- should not be empty', wallet, program)
             initLiquidation(markets, wallet, program).catch(e => {
                 console.log(`Error executing liquidation: ${e}`);
         });
       });
     });
 
-    // call init liq.
-    // call init dialect
-    //     loadMarkets().then((markets) => {
-    //     cron.schedule('*/2 * * * *', async () => {
-    //         initLiquidation(markets).catch(e => {
-    //           console.log('error executing liquidation', e);
-    //         });
-    //       });
-    // })
+    console.log('@@-- loading dialect');
+    initDialectListeners().catch(e => {
+    // Deal with the fact the chain failed
+    console.log(`Error: init of Dialect failed: ${e}`);
+})
 }
 
 

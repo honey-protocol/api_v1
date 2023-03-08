@@ -23,7 +23,7 @@ import {
     NodeDialectSolanaWalletAdapter,
     DialectSolanaWalletAdapterWrapper
 } from '@dialectlabs/blockchain-sdk-solana';
-import {checkForOutbid} from '../helpers'
+import {checkForOutbid} from './'
 const environment: DialectCloudEnvironment = 'production';
 
 /**
@@ -31,8 +31,8 @@ const environment: DialectCloudEnvironment = 'production';
  * @params TBA
  * @returns TBA
 */
-async function initDialectListeners () {
-    console.log('initting DB');
+const initDialectListeners = async () => {
+console.log('initting DB');
 
     const dialectWallet = loadWalletKey(dialectWalletPath);
     console.log('wallet', dialectWallet.publicKey.toString());
@@ -125,3 +125,5 @@ async function initDialectListeners () {
         console.log('message sent!');
     });
 }
+
+export {initDialectListeners}

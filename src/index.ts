@@ -12,9 +12,7 @@ const app = express();
 // init router
 app.use('/', router);
 
-initProgram().then((result) => {
-  console.log('@@-- finished', result)
-})
+initProgram()
 
 // init server
 app.listen(PORT, () => {

@@ -48,7 +48,7 @@ export const CLUSTERS: Cluster[] = [
   },
   {
     name: 'localnet',
-    url: "http://localhost:8899"
+    url: "http://localhost:1337"
   }
 ];
 export const DEFAULT_CLUSTER = CLUSTERS[2];
