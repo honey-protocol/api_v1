@@ -10,7 +10,7 @@ import { BN } from '@project-serum/anchor';
 import { executeBid } from '../utils/liquidations/executeBid';
 
 const cluster = 'mainnet-beta';
-
+// TODO: refactor - figure out mongo setup, seems to be an empty collection
 const initLiquidation = async (markets: HoneyMarket[], wallet: Keypair, program: any) => {
 console.log('initting liquidation');
 
@@ -21,6 +21,10 @@ console.log('initting liquidation');
     }
     const database = mongoClient.db('analytics');
     const db_collection = database.collection<ReserveState>('reserve_states');
+
+    // const data = db_collection.find({})
+    // console.log('@@-- database data', data);
+
 
     for(let i = 0; i < markets.length; i++) {
         const { client, provider } = await initWrappers(wallet, cluster, HONEY_PROGRAM_ID.toString(), markets[i].address.toString());

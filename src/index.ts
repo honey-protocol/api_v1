@@ -11,7 +11,7 @@ const app = express();
 
 // init router
 app.use('/', router);
-
+// inits program - 
 initProgram()
 
 // init server

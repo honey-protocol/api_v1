@@ -28,14 +28,13 @@ const environment: DialectCloudEnvironment = 'production';
 
 /**
  * @description inits dialect listeners
- * @params TBA
- * @returns TBA
+ * @params none
+ * @returns emits message
 */
 const initDialectListeners = async () => {
-console.log('initting DB');
+    console.log('initting DB');
 
     const dialectWallet = loadWalletKey(dialectWalletPath);
-    console.log('wallet', dialectWallet.publicKey.toString());
     let dialectProgram = await loadHoneyProgram(dialectWallet, cluster);
 
     const sdk: DialectSdk<Solana> = Dialect.sdk(
@@ -49,6 +48,7 @@ console.log('initting DB');
     // console.log('dapps', await sdk.dapps.findAll());
 
     console.log('addresses', await sdk.wallet.addresses.findAll());
+
     const dapp = await createDappIfAbsent('Honey Finance', '', sdk);
     console.log('dapp', dapp)
 

@@ -3,7 +3,11 @@ import {
     AggregatorAccount,
     loadSwitchboardProgram,
   } from "@switchboard-xyz/switchboard-v2";
-
+/**
+ * @description fetches the oracle price
+ * @params cluster | connection | aggregator key (PK)
+ * @returns latest aggregator value in promise form
+*/
 export async function getOraclePrice(cluster: "devnet" | "mainnet-beta" = "devnet", connection: Connection, aggregatorKey: PublicKey): Promise<any> {
     // load the switchboard program
     const program = await loadSwitchboardProgram(

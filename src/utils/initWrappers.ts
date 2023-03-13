@@ -3,7 +3,11 @@ import * as anchor from "@project-serum/anchor";
 import { HoneyClient, HoneyMarket, HoneyReserve, HoneyUser } from "@honey-finance/sdk";
 import NodeWallet from "@project-serum/anchor/dist/cjs/nodewallet";
 import { CLUSTERS } from "../constants";
-
+/**
+ * @description fetches market specific data
+ * @params wallet | cluster | honey program id | market public key
+ * @returns honey client | honey market | honey user | honey reserves | anchor provider
+*/
 const initWrappers = async (wallet: Keypair, env: string, honeyProgramId: string, marketPkString: string) => {
 
     const mainnetConn = new Connection(

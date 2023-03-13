@@ -1,14 +1,15 @@
-export const verifiedCreator = '6vRx1iVZo3xfrBHdpvuwArL2jucVj9j9nLpd2VUTTGMG';
 import { clusterApiUrl, PublicKey } from "@solana/web3.js";
 import dotenv from "dotenv";
+// init config | set and export cluster / mainnet rpc endpoint
 const config = dotenv.config();
 const DEFAULT_MAINNET_CLUSTER = process.env.DEFAULT_MAINNET_CLUSTER || '';
 const MAINNET_RPC_ENDPOINT = config.parsed ? config.parsed.MAINNET_RPC_ENDPOINT : DEFAULT_MAINNET_CLUSTER;
-
+// verified creator of the HGB collection
+export const verifiedCreator = '6vRx1iVZo3xfrBHdpvuwArL2jucVj9j9nLpd2VUTTGMG';
 export const HONEY_PROGRAM_ID = new PublicKey(
     "hNEYyRsRBVq2La65V1KjvdbTE39w36gwrdjkmcpvysk"
 );
-
+// all the id's of the markets
 export const HONEY_MARKET_IDS = [
   new PublicKey('6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3'),// Honey Gen
   new PublicKey('Bw77MGpg189EaATjN67WXcnp3c4544LhKoV4Ftmdg4C'),// Pesky Penguins
@@ -25,14 +26,15 @@ export const HONEY_MARKET_IDS = [
   new PublicKey('7pfaZcAqpWRHpEqGMwPQrn5tj5WVQ48F4PrAtFLuS1P7'), // Drunken Ape Social Club
 ];
 
-export const USDC_MINT = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v")
-export const SOL_ADDRESS = new PublicKey("So11111111111111111111111111111111111111112")
-export const SVT_MINT_ADDRESS = new PublicKey("svtMpL5eQzdmB3uqK9NXaQkq8prGZoKQFNVJghdWCkV");//droplet mint address for certain nft collection
-
+export const USDC_MINT = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"); // USDC
+export const SOL_ADDRESS = new PublicKey("So11111111111111111111111111111111111111112"); // wrapped SOL
+export const SVT_MINT_ADDRESS = new PublicKey("svtMpL5eQzdmB3uqK9NXaQkq8prGZoKQFNVJghdWCkV"); // droplet mint address for certain nft collection
+// cluster structure
 type Cluster = {
     name: string;
     url: string;
   };
+
 export const CLUSTERS: Cluster[] = [
   {
     name: 'mainnet-beta',
@@ -51,4 +53,5 @@ export const CLUSTERS: Cluster[] = [
     url: "http://localhost:1337"
   }
 ];
+
 export const DEFAULT_CLUSTER = CLUSTERS[2];

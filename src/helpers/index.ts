@@ -20,11 +20,16 @@ import {
 } from '@dialectlabs/sdk';
 import { initLiquidation } from './liquidation';
 import { initDialectListeners } from './dialect';
+
 // TODO: switch to devnet for local testing
 const cluster = 'mainnet-beta'; //mainnet-beta, devnet, testnet
 let wallet: Keypair;
 let program: any;
-
+/**
+ * @description loops through all the market IDs and inits the honey wrappers
+ * @params none
+ * @returns markets with their objects: honey client | honey market | honey user | honey reserves | anchor provider
+*/
 const loadMarkets = async (): Promise<HoneyMarket[]> => {
     let markets: HoneyMarket[] = [];
     wallet = loadWalletKey(keypairPath);
@@ -37,10 +42,15 @@ const loadMarkets = async (): Promise<HoneyMarket[]> => {
 
     return markets;
 }
-
+/**
+ * @description fetches and inits all the bids of all markets
+ * @params none
+ * @returns array of objects containing market id with bidding data
+*/
 const fetchAllBidsOnChain = async () => {
     let bids = [];
     const allBids = await program.account.bid.all();
+
     for(const v of allBids) {
         if((await program.provider.connection.getAccountInfo(v.publicKey))) {
             const bid = {
@@ -56,7 +66,6 @@ const fetchAllBidsOnChain = async () => {
     }
     return bids
 }
-
 /**
  * @description fetchs all bids in the same market, 
  * filters out with greater bidLimit 
@@ -83,8 +92,11 @@ const checkForOutbid = async (bid: string, bid_limit: string, dapp: Dapp) => {
         });
     }
 }
-
-
+/**
+ * @description fetches and inits all the bids of a market
+ * @params market id - Public key
+ * @returns array of objects containing bidding data
+*/
 const fetchBidsOnChain = async(market_id: PublicKey) => {
     let bids = [];
     const allBids = await program.account.bid.all();
@@ -107,8 +119,11 @@ const fetchBidsOnChain = async(market_id: PublicKey) => {
     }
     return bids;
 }
-
-
+/**
+ * @description subset of checkForOutBid
+ * @params array of market ids being PublicKeys | the bid
+ * @returns market id | null
+*/
 const findMarketOfBid = async (market_ids: PublicKey[], bid: string) => {
     const bid_account = await program.account.bid.fetch(bid);
 
@@ -126,7 +141,8 @@ const findMarketOfBid = async (market_ids: PublicKey[], bid: string) => {
     return null;
 }
 /**
- * @description inits the markets
+ * @description inits the markets and fires of a cron job 
+ * every 2 minutes that calls upon the initLiquidation function
 */
 const initProgram = async () => {
     // call loadmarkets
