@@ -1,10 +1,13 @@
 import {Request, Response, NextFunction } from 'express';
 import { fetchAllBidsOnChain, fetchBidsOnChain } from '../helpers';
 import { PublicKey } from "@solana/web3.js";
+
+/** This file contains the logic / execution functions of the routes for the Honey Finance API **/
+
 /**
- * @description
- * @params
- * @return
+ * @description fetches all bids of all markets on chain
+ * @params request object, response object, next middleware
+ * @return array of objects containing the market and the bid info
 */
 const handleAllMarketsBids = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -17,9 +20,9 @@ const handleAllMarketsBids = async (req: Request, res: Response, next: NextFunct
   }
 }
 /**
- * @description
- * @params
- * @return
+ * @description fetches all bids of a specific market on chain
+ * @params request object, response object, next middleware
+ * @return array of objects containing the market and the bid info
 */
 const handleSingleMarketBids = async (req: Request, res: Response, next: NextFunction) => {
   try {

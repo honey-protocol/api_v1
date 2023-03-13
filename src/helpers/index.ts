@@ -30,13 +30,11 @@ const loadMarkets = async (): Promise<HoneyMarket[]> => {
     wallet = loadWalletKey(keypairPath);
     program = await loadHoneyProgram(wallet, cluster);
 
-    console.log('loading markets');
-
     for(let i = 0; i < HONEY_MARKET_IDS.length; i++) {
         const { market } = await initWrappers(wallet, cluster, HONEY_PROGRAM_ID.toString(), HONEY_MARKET_IDS[i].toString());
         markets.push(market);
     }
-    console.log('finished loading markets');
+
     return markets;
 }
 
@@ -127,12 +125,13 @@ const findMarketOfBid = async (market_ids: PublicKey[], bid: string) => {
     }
     return null;
 }
-
+/**
+ * @description inits the markets
+*/
 const initProgram = async () => {
-    console.log('@@-- program being initalised')
     // call loadmarkets
     loadMarkets().then((markets) => {
-        console.log('@@-- loading markets', wallet, program)
+        console.log('@@-- init markets')
         cron.schedule('*/2 * * * *', async () => {
             initLiquidation(markets, wallet, program).catch(e => {
                 console.log(`Error executing liquidation: ${e}`);
@@ -140,7 +139,7 @@ const initProgram = async () => {
       });
     });
 
-    console.log('@@-- loading dialect');
+    console.log('@@-- init dialect');
     initDialectListeners().catch(e => {
     // Deal with the fact the chain failed
     console.log(`Error: init of Dialect failed: ${e}`);

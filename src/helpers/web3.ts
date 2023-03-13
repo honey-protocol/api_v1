@@ -6,10 +6,6 @@ import { DerivedAccount, ReserveConfig, ToBytes } from "@honey-finance/sdk";
 
 type DerivedAccountSeed = HasPublicKey | ToBytes | Uint8Array | string;
 
-
-
-
-
 export async function findBidAccount(market: PublicKey, bidder: PublicKey): Promise<DerivedAccount> {
     return await findDerivedAccount(["bid", market, bidder]);
 }
