@@ -5,18 +5,25 @@ import { Connection, Keypair, PublicKey } from "@solana/web3.js";
 import { readFileSync } from "fs";
 import { CLUSTERS, HONEY_PROGRAM_ID } from "../constants";
 var web3 = require("@solana/web3.js");
-
+/**
+ * @description fetches the reserve info of a specific market
+ * @params honey program | market ID
+ * @returns promise -> HoneyMarketReserveInfo
+*/
 const fetchMarketReserveInfo = async (honeyProgram: any, marketId: PublicKey): Promise<HoneyMarketReserveInfo[]> => {
   // market info
   const marketValue = await honeyProgram.account.market.fetch(marketId);
-
   // reserve info
   const reserveInfoData = new Uint8Array(marketValue.reserves as any as number[]);
   const reserveInfoList = MarketReserveInfoList.decode(reserveInfoData) as HoneyMarketReserveInfo[];
   
   return reserveInfoList;
 }
-
+/**
+ * @description fetches TReserve
+ * @params HoneyClient | HoneyMarketReserveInfo
+ * @returns promise -> data object from TReserve
+*/
 const fetchReserve = async (client: HoneyClient, reserveInfo: HoneyMarketReserveInfo): Promise<TReserve> => {
     if (reserveInfo.reserve.equals(PublicKey.default)) {
       throw new Error("wrong reserve!");
@@ -26,7 +33,11 @@ const fetchReserve = async (client: HoneyClient, reserveInfo: HoneyMarketReserve
     //   console.log("reserves data", data);
     return data;
 }
-
+/**
+ * @description loads wallet key
+ * @params keypair
+ * @returns keypair
+*/
 const loadWalletKey = (keypair: any) => {
   if (!keypair || keypair == '') {
     throw new Error('Keypair is required!');
@@ -37,10 +48,14 @@ const loadWalletKey = (keypair: any) => {
   // console.log(`wallet public key: ${loaded.publicKey}`);
   return loaded;
 }
-
-const loadHoneyProgram = async (walletKeyPair: Keypair, env: string) => {
+/**
+ * @description inits honey program
+ * @params walletKeyPair | cluster 
+ * @returns
+*/
+const loadHoneyProgram = async (walletKeyPair: Keypair, cluster: string) => {
   const solConnection = new Connection(
-    env == "mainnet-beta"? CLUSTERS[0].url: web3.clusterApiUrl(env),
+    cluster == "mainnet-beta"? CLUSTERS[0].url: web3.clusterApiUrl(cluster),
   );
 
   const walletWrapper = new NodeWallet(walletKeyPair);

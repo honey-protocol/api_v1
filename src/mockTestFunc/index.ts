@@ -1,5 +1,5 @@
 // base async func. for testing jest purpose
-const add = (a, b) => {
+const add = (a: number, b: number) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       if (a < 0 || b < 0) {
