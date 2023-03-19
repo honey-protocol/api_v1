@@ -1,6 +1,6 @@
 import express from 'express';
 const router = express.Router();
-import {handleAllMarketsBids, handleSingleMarketBids} from '../controller/index'
+import {handleAllMarketsBids, handleSingleMarketBids, handleUpdateMarket} from '../controller/index'
 
 /** This file contains the routes for the Honey Finance API **/
 
@@ -20,6 +20,14 @@ router
 router 
   .route('/bids/:marketId')
   .get(handleSingleMarketBids);
+/**
+ * @description stores most recent data of market in DB
+ * @params post request must contain marketId type string being the market id
+ * @returns either success message or error message
+*/
+router
+  .route('/updateMarket')
+  .post(handleUpdateMarket)
 /**
  * @description 404 route
  * @params none

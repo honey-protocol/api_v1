@@ -19,8 +19,8 @@ console.log('initting liquidation');
         console.log('wallet and program not ready yet')
         return;
     }
-    const database = mongoClient.db('analytics');
-    const db_collection = database.collection<ReserveState>('reserve_states');
+    // const database = mongoClient.db('analytics');
+    // const db_collection = database.collection<ReserveState>('reserve_states');
 
     // const data = db_collection.find({})
     // console.log('@@-- database data', data);
@@ -45,19 +45,19 @@ console.log('initting liquidation');
         let obligations = await markets[i].fetchObligations();
         // console.log('obligations', obligations);
 
-        const newRecord = await db_collection.insertOne({
-            market_id: reserveInfo.market.toString(),
-            accrued_until: reserveInfo.reserveState.accruedUntil.toString(),
-            outstanding_debt: reserveInfo.reserveState.outstandingDebt.toString(),
-            uncollected_fees: reserveInfo.reserveState.uncollectedFees.toString(),
-            protocol_uncollected_fees: reserveInfo.reserveState.protocolUncollectedFees.toString(),
-            total_deposits: reserveInfo.reserveState.totalDeposits.toString(),
-            total_deposit_notes: reserveInfo.reserveState.totalDepositNotes.toString(),
-            total_loan_notes: reserveInfo.reserveState.totalLoanNotes.toString(),
-            last_updated: reserveInfo.reserveState.lastUpdated.toString(),
-            invalidated: reserveInfo.reserveState.invalidated,
-            created_at: Date.now()
-        })
+        // const newRecord = await db_collection.insertOne({
+        //     market_id: reserveInfo.market.toString(),
+        //     accrued_until: reserveInfo.reserveState.accruedUntil.toString(),
+        //     outstanding_debt: reserveInfo.reserveState.outstandingDebt.toString(),
+        //     uncollected_fees: reserveInfo.reserveState.uncollectedFees.toString(),
+        //     protocol_uncollected_fees: reserveInfo.reserveState.protocolUncollectedFees.toString(),
+        //     total_deposits: reserveInfo.reserveState.totalDeposits.toString(),
+        //     total_deposit_notes: reserveInfo.reserveState.totalDepositNotes.toString(),
+        //     total_loan_notes: reserveInfo.reserveState.totalLoanNotes.toString(),
+        //     last_updated: reserveInfo.reserveState.lastUpdated.toString(),
+        //     invalidated: reserveInfo.reserveState.invalidated,
+        //     created_at: Date.now()
+        // })
 
         // console.log('getting oracle Price using cluster', cluster)
         const solPriceUsd = await getOraclePrice(cluster, liquidatorClient.conn, reserveInfo.switchboardPriceAggregator);
