@@ -47,10 +47,10 @@ const initDialectListeners = async () => {
     );
     // console.log('dapps', await sdk.dapps.findAll());
 
-    console.log('addresses', await sdk.wallet.addresses.findAll());
+    // console.log('addresses', await sdk.wallet.addresses.findAll());
 
     const dapp = await createDappIfAbsent('Honey Finance', '', sdk);
-    console.log('dapp', dapp)
+    // console.log('dapp', dapp)
 
     let listenerRevokeBid = dialectProgram.addEventListener("RevokeBidEvent", async (event, slot) => {
         console.log('RevokeBidEvent');
