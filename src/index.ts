@@ -39,6 +39,8 @@ app.use(hpp());
 // }
 // init cors
 // app.use(cors(corsOptions));
+// allow all domains to access api
+app.use(cors());
 // init router
 app.use('/', router);
 // inits program - 
