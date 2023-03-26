@@ -2,6 +2,7 @@ import {Request, Response, NextFunction } from 'express';
 import { fetchAllBidsOnChain, fetchBidsOnChain } from '../helpers';
 import { PublicKey } from "@solana/web3.js";
 import { Market } from '../db/models/MarketModel'
+import { MARKET_IDS_STRING } from '../constants';
 
 /** This file contains the logic / execution functions of the routes for the Honey Finance API **/
 
@@ -48,30 +49,37 @@ const handleUpdateMarket = async (req: Request, res: Response, next: NextFunctio
     status: 'Failed',
     message: 'Please provide a market id'
   }
+
   try {
-   // fetch bids
-    const bids = await fetchBidsOnChain(new PublicKey(marketId));
-    //  create new model 
-    const market = new Market({
-      marketId,
-      bids
-    });
-    // validate if market exists
-    const existingMarket = await Market.exists({ marketId: req.body.marketId });
-    // update if exists or create new market
-    if (existingMarket) {
-      console.log('Market exists')
-      await Market.findOneAndUpdate({ marketId: req.body.marketId}, { bids });
+    // validate if market ID is an active honey market 
+    if (MARKET_IDS_STRING.includes(marketId)) {
+      // fetch bids
+      const bids = await fetchBidsOnChain(new PublicKey(marketId));
+      //  create new model 
+      const market = new Market({
+        marketId,
+        bids
+      });
+      // validate if market exists
+      const existingMarket = await Market.exists({ marketId: req.body.marketId });
+      // update if exists or create new market
+      if (existingMarket) {
+        console.log('Market exists')
+        await Market.findOneAndUpdate({ marketId: req.body.marketId}, { bids });
+      } else {
+        console.log('Market does not exist')
+        await market.save();
+      }
+      res.json({
+        status: 'Success',
+        message: 'Marketdata updated'
+      });
     } else {
-      console.log('Market does not exist')
-      await market.save();
+        res.json({ status: 'Failed', message: 'Not an active Honeymarket' });
     }
-    res.json({
-      status: 'success'
-    })
   } catch (error) {
-    console.log(`Error fetching bids for market: ${error}`);
-    res.json([]);
+      console.log(`Error updating market: ${error}`);
+      res.json([]);
   }
 }
 
