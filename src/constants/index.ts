@@ -42,6 +42,11 @@ export const MARKET_IDS_STRING: string[] = [
   '7pfaZcAqpWRHpEqGMwPQrn5tj5WVQ48F4PrAtFLuS1P7',
 ]
 
+// Case-sensitive
+export const PNFT_MARKET_IDS_STRING: string[] = [
+
+]
+
 export const USDC_MINT = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"); // USDC
 export const SOL_ADDRESS = new PublicKey("So11111111111111111111111111111111111111112"); // wrapped SOL
 export const SVT_MINT_ADDRESS = new PublicKey("svtMpL5eQzdmB3uqK9NXaQkq8prGZoKQFNVJghdWCkV"); // droplet mint address for certain nft collection

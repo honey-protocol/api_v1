@@ -1,7 +1,7 @@
 import { HoneyClient, HoneyMarketReserveInfo, ObligationPositionStruct, PositionInfoList, getHealthStatus, NftPosition, TReserve, LiquidatorClient, withdraw, TokenAmount, HoneyMarket} from '@honey-finance/sdk';
 import { Keypair, PublicKey } from '@solana/web3.js';
 import { mongoClient, ReserveState } from '../utils/db';
-import { HONEY_PROGRAM_ID } from '../constants';
+import { HONEY_PROGRAM_ID, PNFT_MARKET_IDS_STRING } from '../constants';
 import { initWrappers } from '../utils/initWrappers';
 import { fetchMarketReserveInfo, fetchReserve, loadWalletKey, loadHoneyProgram, roundHalfDown } from '../utils/programUtils';
 import { getOraclePrice } from './switchboard';
@@ -135,7 +135,8 @@ const initLiquidation = async (markets: HoneyMarket[], wallet: Keypair, program:
                             wallet.publicKey,
                             wallet,
                             cluster,
-                            HONEY_PROGRAM_ID.toString()
+                            HONEY_PROGRAM_ID.toString(),
+                            PNFT_MARKET_IDS_STRING.includes(markets[i].address.toString())                            
                         );
                     }
                 }

@@ -13,7 +13,8 @@ const executeBid = async (
   payer: PublicKey,
   wallet: Keypair, 
   env: string, 
-  programId: string
+  programId: string,
+  pnft?: boolean
 ) => {
   const bidPK = new PublicKey(bid);
   const nftMintPk = new PublicKey(nftMint);
@@ -42,8 +43,13 @@ const executeBid = async (
       bidder: new PublicKey(bidData.bidder),
   }
   
-  const tx = await liquidator.executeBid(reserves, params);
-  console.log("TxId: ", tx);
+  if (pnft) {
+    const tx = await liquidator.executePnftBid(reserves, params);
+    console.log("TxId: ", tx);
+  } else {
+    const tx = await liquidator.executeBid(reserves, params);
+    console.log("TxId: ", tx);
+  }
 }
 
 // testing bids
