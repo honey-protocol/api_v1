@@ -50,7 +50,7 @@ const initLiquidation = async (markets: HoneyMarket[], wallet: Keypair, program:
 
                 let nftMints:PublicKey[] = obligation.account.collateralNftMint;
                 const nft = nftMints[0];
-                
+                // filter out default PKs
                 if(nft === PublicKey.default) {
                     console.log('not nft data');
                     continue;
@@ -79,7 +79,7 @@ const initLiquidation = async (markets: HoneyMarket[], wallet: Keypair, program:
                 //     .div(new BN(10 ** 5)).toNumber() / (10 ** 4);//dividing lamport
 
                 const health:string = getHealthStatus(totalDebt.uiAmountFloat, nftPrice); //TODO: not just nftPrice but with token deposits as collateral
-                const is_risky = (totalDebt.uiAmountFloat / nftPrice * 100) >= 65;
+                const is_risky = (totalDebt.uiAmountFloat / nftPrice * 100) >= 65; // TODO: breaks in bulkloans - revise 
                 
                 if(is_risky) {
                     if(sortedBids.length == 0) { // if there is no bid, execute solvent liquidation
