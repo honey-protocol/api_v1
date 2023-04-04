@@ -1,6 +1,12 @@
 import express from 'express';
 const router = express.Router();
-import {handleAllMarketsBids, handleSingleMarketBids, handleUpdateMarket} from '../controller/index'
+import {
+  handleAllMarketsBids, 
+  handleSingleMarketBids, 
+  handleUpdateMarket, 
+  handleFetchMarketLiquidations, 
+  handleFetchMarketsLiquidations
+} from '../controller/index'
 
 /** This file contains the routes for the Honey Finance API **/
 
@@ -28,6 +34,22 @@ router
 router
   .route('/updateMarket')
   .post(handleUpdateMarket)
+/**
+ * @description fetches liquidations of a specific market
+ * @params marketID: string
+ * @returns array of objects containing liquidation data
+*/
+router
+  .route('/liquidationOverview/:marketId')
+  .get(handleFetchMarketLiquidations)
+/**
+ * @description fetches liquidations of a all markets
+ * @params none
+ * @returns array of objects each object representing a market - with liquidations
+*/
+router
+  .route('/liquidationOverview')
+  .get(handleFetchMarketsLiquidations)
 /**
  * @description 404 route
  * @params none
