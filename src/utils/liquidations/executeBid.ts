@@ -2,6 +2,7 @@ import { ExecuteBidParams, HoneyReserve, LiquidatorClient, TxnResponse } from "@
 import { ASSOCIATED_TOKEN_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { Keypair, PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js";
 import { initWrappers } from "../initWrappers";
+import { LiquidationModel } from "../../db/models/LiquidationModel";
 
 const executeBid = async (
   liquidator: LiquidatorClient,
@@ -15,35 +16,61 @@ const executeBid = async (
   env: string, 
   programId: string
 ) => {
-  const bidPK = new PublicKey(bid);
-  const nftMintPk = new PublicKey(nftMint);
-  const reservePk = new PublicKey(reserve);
-  const obligationPk = new PublicKey(obligation);
-  const marketPk: PublicKey = new PublicKey(market);
-  const bidData = await liquidator.program.account.bid.fetch(bidPK);
-  const { reserves } = await initWrappers(wallet, env, programId, market);
 
-  // const withdrawSource = await Token.getAssociatedTokenAddress(
-  //     ASSOCIATED_TOKEN_PROGRAM_ID,
-  //     TOKEN_PROGRAM_ID,
-  //     bidMint,
-  //     bidder
-  // );
+  try {
+    const bidPK = new PublicKey(bid);
+    const nftMintPk = new PublicKey(nftMint);
+    const reservePk = new PublicKey(reserve);
+    const obligationPk = new PublicKey(obligation);
+    const marketPk: PublicKey = new PublicKey(market);
+    const bidData = await liquidator.program.account.bid.fetch(bidPK);
+    const { reserves } = await initWrappers(wallet, env, programId, market);
 
-  console.log('nftMint', nftMintPk.toString());
-  console.log('bidder', bidData.bidder.toString())
+    // const withdrawSource = await Token.getAssociatedTokenAddress(
+    //     ASSOCIATED_TOKEN_PROGRAM_ID,
+    //     TOKEN_PROGRAM_ID,
+    //     bidMint,
+    //     bidder
+    // );
 
-  const params: ExecuteBidParams = {
-      market: marketPk,
-      obligation: obligationPk,
-      reserve: reservePk,
-      nftMint: nftMintPk,
-      payer,
-      bidder: new PublicKey(bidData.bidder),
-  }
+    console.log('nftMint', nftMintPk.toString());
+    console.log('bidder', bidData.bidder.toString());
+
+    const params: ExecuteBidParams = {
+        market: marketPk,
+        obligation: obligationPk,
+        reserve: reservePk,
+        nftMint: nftMintPk,
+        payer,
+        bidder: new PublicKey(bidData.bidder),
+    }
   
-  const tx = await liquidator.executeBid(reserves, params);
-  console.log("TxId: ", tx);
+    const tx = await liquidator.executeBid(reserves, params);
+
+    if (tx[0] === 'FAILED') {
+      console.log(`Liquidation failed`);
+      return;
+    } else {
+      const liquidation = new LiquidationModel({
+        marketId: market,
+        obligationId: obligation,
+        collateralNFTMint: nftMint,
+        payer: payer.toString()
+      });
+
+      await liquidation.save().then((res) => {
+        console.log(`Liquidation stored in DB: ${res}`)
+      }).catch((err) => {
+        console.log(`Error storing liquidation ${err}`);
+      })
+      
+      console.log("TxId: ", tx);
+      return;
+    }
+  } catch (error) {
+      console.log(`An error occurred in executing the liquidation: ${error}`);
+      return;
+  }
 }
 
 // testing bids

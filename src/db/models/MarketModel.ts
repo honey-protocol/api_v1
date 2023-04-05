@@ -25,6 +25,6 @@ const marketSchema = new Schema<MarketM>({
   ]
 })
 // create a model based on the market schema 
-const Market = model<MarketM>('Market', marketSchema);
+const Market = model<MarketM>('Market', marketSchema, 'markets');
 // export model
 export { Market }

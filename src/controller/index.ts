@@ -1,7 +1,8 @@
 import {Request, Response, NextFunction } from 'express';
 import { fetchAllBidsOnChain, fetchBidsOnChain } from '../helpers';
 import { PublicKey } from "@solana/web3.js";
-import { Market } from '../db/models/MarketModel'
+import { Market } from '../db/models/MarketModel';
+import { LiquidationModel } from '../db/models/LiquidationModel';
 import { MARKET_IDS_STRING } from '../constants';
 
 /** This file contains the logic / execution functions of the routes for the Honey Finance API **/
@@ -82,5 +83,53 @@ const handleUpdateMarket = async (req: Request, res: Response, next: NextFunctio
       res.json([]);
   }
 }
+/**
+ * @description fetches liquidations of a specific market
+ * @params request object, response object, next middleware
+ * @return array of objects - each object being a liquidation
+*/
+const handleFetchMarketLiquidations = async (req: Request, res: Response, next: NextFunction) => {
+  const marketId = req.params.marketId ? req.params.marketId : false;
+  // return error if not found
+  if (!marketId) return {
+    status: 'Failed',
+    message: 'Please provide a market id'
+  }
 
-export { handleAllMarketsBids, handleSingleMarketBids, handleUpdateMarket }
+  try {
+    // validate if market ID is an active honey market
+    if (MARKET_IDS_STRING.includes(marketId)) {
+      const marketLiquidations = await LiquidationModel.find({ marketId });
+      console.log('@@-- marketLiq. outcome', marketLiquidations);
+      res.json(marketLiquidations);
+    } else {
+      res.json({status: 'Failed', message: 'Not an active Honeymarket'});
+    }
+  } catch (error) {
+    console.log(`Error fetching liquidations for market ${marketId}: ${error}`);
+    res.json([]);
+  }
+}
+/**
+ * @description fetches liquidations of all markets
+ * @params request object, response object, next middleware
+ * @return array of objects - each object containing a market ID and an array of liquidations
+*/
+const handleFetchMarketsLiquidations = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    // fetch liquidations for all markets
+    const marketsLiquidations = await LiquidationModel.find();
+    console.log('@@-- marketsLiq. outcome', marketsLiquidations);
+    res.json(marketsLiquidations);
+  } catch (error) {
+    console.log(`Error fetching liquidations ${error}`);
+    res.json([]);
+  }
+}
+export { 
+  handleAllMarketsBids, 
+  handleSingleMarketBids, 
+  handleUpdateMarket,
+  handleFetchMarketLiquidations,
+  handleFetchMarketsLiquidations
+}
