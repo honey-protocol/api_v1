@@ -481,12 +481,12 @@
   dependencies:
     "@hapi/hoek" "^9.0.0"
 
-"@honey-finance/sdk@1.0.137":
-  version "1.0.137"
-  resolved "https://registry.yarnpkg.com/@honey-finance/sdk/-/sdk-1.0.137.tgz#6873c57b7034c1e80a8ff9f5e0988275c65bf6da"
-  integrity sha512-h3gwPHUDDC/s7Zm5cwCqP/tG4oS1JRRyf2YtnwTca3cSs7TfVMDVRjLMt2meWaqNQCGjwhV7omTszV5g5ZktCA==
+"@honey-finance/sdk@^1.1.126":
+  version "1.1.126"
+  resolved "https://registry.yarnpkg.com/@honey-finance/sdk/-/sdk-1.1.126.tgz#3eea4d6e4ee4545796c8613fc653f5d37aa3eb51"
+  integrity sha512-irIc33LrYlRgE7RrwLdQFknkhZ4WtQZVoeMZ4WmnzsMB9D5NhlbWjeldNwVJ65gbNN/JHhNPLAd1RLs0VCijSg==
   dependencies:
-    "@honey-finance/sdk" "^1.0.59"
+    "@honey-finance/sdk" "^1.1.48"
     "@metaplex-foundation/mpl-token-metadata" "^1.2.0"
     "@project-serum/anchor" "^0.25.0"
     "@project-serum/serum" "^0.13.61"
@@ -500,7 +500,7 @@
     "@types/chai-as-promised" "^7.1.5"
     "@types/mocha" "^9.1.0"
 
-"@honey-finance/sdk@^1.0.59", "@honey-finance/sdk@^1.1.48":
+"@honey-finance/sdk@^1.1.48":
   version "1.1.121"
   resolved "https://registry.yarnpkg.com/@honey-finance/sdk/-/sdk-1.1.121.tgz#57fe10f3ae4b755261ba7be0601212c25d275b28"
   integrity sha512-vuQmLxTGODOsqPUvdkwybjWb9R4tSJ2ABRH2ESzqTWJF9r+xPUED0OjKit1vaiycW/realn70aR6XVkThuJwag==

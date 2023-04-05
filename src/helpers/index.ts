@@ -1,4 +1,4 @@
-import { HoneyClient, HoneyMarketReserveInfo, ObligationPositionStruct, PositionInfoList, getHealthStatus, NftPosition, TReserve, LiquidatorClient, withdraw, TokenAmount, HoneyMarket} from '@honey-finance/sdk';
+import { HoneyClient, ObligationPositionStruct, PositionInfoList, getHealthStatus, NftPosition, TReserve, LiquidatorClient, withdraw, TokenAmount, HoneyMarket} from '@honey-finance/sdk';
 import { loadWalletKey, loadHoneyProgram,  fetchMarketReserveInfo, fetchReserve } from '../utils/programUtils';
 import { HONEY_MARKET_IDS, HONEY_PROGRAM_ID } from '../constants';
 var keypairPath = './keypair.json';

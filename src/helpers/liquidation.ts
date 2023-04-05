@@ -1,6 +1,5 @@
-import { HoneyClient, HoneyMarketReserveInfo, ObligationPositionStruct, PositionInfoList, getHealthStatus, NftPosition, TReserve, LiquidatorClient, withdraw, TokenAmount, HoneyMarket} from '@honey-finance/sdk';
+import { HoneyClient, CachedReserveInfo, ObligationPositionStruct, PositionInfoList, getHealthStatus, NftPosition, TReserve, LiquidatorClient, withdraw, TokenAmount, HoneyMarket} from '@honey-finance/sdk';
 import { Keypair, PublicKey } from '@solana/web3.js';
-import { mongoClient, ReserveState } from '../utils/db';
 import { HONEY_PROGRAM_ID } from '../constants';
 import { initWrappers } from '../utils/initWrappers';
 import { fetchMarketReserveInfo, fetchReserve, loadWalletKey, loadHoneyProgram, roundHalfDown } from '../utils/programUtils';
@@ -23,8 +22,8 @@ const initLiquidation = async (markets: HoneyMarket[], wallet: Keypair, program:
     for(let i = 0; i < markets.length; i++) {
         // inits the honey objects and Anchor provider
         const { client, provider } = await initWrappers(wallet, cluster, HONEY_PROGRAM_ID.toString(), markets[i].address.toString());
-        // fetches HoneyMarketReserveInfo
-        const marketReserveInfo: HoneyMarketReserveInfo[] = await fetchMarketReserveInfo(client.program, markets[i].address);
+        // fetches CachedReserveInfo
+        const marketReserveInfo: CachedReserveInfo[] = await fetchMarketReserveInfo(client.program, markets[i].address);
         // fetches TReserve
         const reserveInfo: TReserve = await fetchReserve(client, marketReserveInfo[0]);
         // creates an instance of the Liquidator client
