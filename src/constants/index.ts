@@ -24,6 +24,7 @@ export const HONEY_MARKET_IDS = [
   new PublicKey('Dmngi1MDEQU9fm6sX39EuyT3EpYEmXYuyg56uEjVCkD6'), // Marshies
   new PublicKey('5ZxAjKpbYje5fCxhvnRYxbMh6XSZm5Cd7RA9mMGb1DLY'), // Heavenland 
   new PublicKey('7pfaZcAqpWRHpEqGMwPQrn5tj5WVQ48F4PrAtFLuS1P7'), // Drunken Ape Social Club
+  new PublicKey('HyUDgtmrERNC6xnPUjxs7fvkB6rX5esqvP5LW4LiXzrV'), // Wolf capital
 ];
 
 export const MARKET_IDS_STRING: string[] = [

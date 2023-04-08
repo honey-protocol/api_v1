@@ -1,4 +1,4 @@
-import { HoneyClient, HoneyMarketReserveInfo, HoneyReserve, TReserve, MarketReserveInfoList } from "@honey-finance/sdk";
+import { HoneyClient, CachedReserveInfo, HoneyReserve, TReserve, MarketReserveInfoList } from "@honey-finance/sdk";
 import { Program, AnchorProvider } from "@project-serum/anchor";
 import NodeWallet from "@project-serum/anchor/dist/cjs/nodewallet";
 import { Connection, Keypair, PublicKey } from "@solana/web3.js";
@@ -8,23 +8,23 @@ var web3 = require("@solana/web3.js");
 /**
  * @description fetches the reserve info of a specific market
  * @params honey program | market ID
- * @returns promise -> HoneyMarketReserveInfo
+ * @returns promise -> CachedReserveInfo
 */
-const fetchMarketReserveInfo = async (honeyProgram: any, marketId: PublicKey): Promise<HoneyMarketReserveInfo[]> => {
+const fetchMarketReserveInfo = async (honeyProgram: any, marketId: PublicKey): Promise<CachedReserveInfo[]> => {
   // market info
   const marketValue = await honeyProgram.account.market.fetch(marketId);
   // reserve info
   const reserveInfoData = new Uint8Array(marketValue.reserves as any as number[]);
-  const reserveInfoList = MarketReserveInfoList.decode(reserveInfoData) as HoneyMarketReserveInfo[];
+  const reserveInfoList = MarketReserveInfoList.decode(reserveInfoData) as CachedReserveInfo[];
   
   return reserveInfoList;
 }
 /**
  * @description fetches TReserve
- * @params HoneyClient | HoneyMarketReserveInfo
+ * @params HoneyClient | CachedReserveInfo
  * @returns promise -> data object from TReserve
 */
-const fetchReserve = async (client: HoneyClient, reserveInfo: HoneyMarketReserveInfo): Promise<TReserve> => {
+const fetchReserve = async (client: HoneyClient, reserveInfo: CachedReserveInfo): Promise<TReserve> => {
     if (reserveInfo.reserve.equals(PublicKey.default)) {
       throw new Error("wrong reserve!");
     };
