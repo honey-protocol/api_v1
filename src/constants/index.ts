@@ -41,6 +41,12 @@ export const MARKET_IDS_STRING: string[] = [
   'Dmngi1MDEQU9fm6sX39EuyT3EpYEmXYuyg56uEjVCkD6',
   '5ZxAjKpbYje5fCxhvnRYxbMh6XSZm5Cd7RA9mMGb1DLY',
   '7pfaZcAqpWRHpEqGMwPQrn5tj5WVQ48F4PrAtFLuS1P7',
+  'HyUDgtmrERNC6xnPUjxs7fvkB6rX5esqvP5LW4LiXzrV'
+]
+
+// Case-sensitive
+export const PNFT_MARKET_IDS_STRING: string[] = [
+
 ]
 
 export const USDC_MINT = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"); // USDC

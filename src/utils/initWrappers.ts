@@ -21,9 +21,9 @@ const initWrappers = async (wallet: Keypair, env: string, honeyProgramId: string
     const marketPk = new PublicKey(marketPkString);
     const market: HoneyMarket = await HoneyMarket.load(client, marketPk);
     
-    const reserves: HoneyReserve[] = market.reserves.map(
-        (reserve) =>  new HoneyReserve(client, market, reserve.reserve)
-    ).filter(reserve => !reserve.reserve.equals(PublicKey.default));
+    const reserves: HoneyReserve[] = market.cachedReserveInfo
+    .map((reserve) => new HoneyReserve(client, market, reserve.reserve))
+    .filter((reserve) => !reserve.reserve.equals(PublicKey.default));
 
     await Promise.all(
         reserves.map(async (reserve) => {

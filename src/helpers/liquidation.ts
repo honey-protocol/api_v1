@@ -1,12 +1,12 @@
-import { HoneyClient, CachedReserveInfo, ObligationPositionStruct, PositionInfoList, getHealthStatus, NftPosition, TReserve, LiquidatorClient, withdraw, TokenAmount, HoneyMarket} from '@honey-finance/sdk';
+import { HoneyClient, CachedReserveInfo, ObligationPositionStruct, PositionInfoList, getHealthStatus, NftPosition, TReserve, LiquidatorClient, withdraw, TokenAmount, HoneyMarket, HoneyReserve} from '@honey-finance/sdk';
 import { Keypair, PublicKey } from '@solana/web3.js';
-import { HONEY_PROGRAM_ID } from '../constants';
+import { HONEY_PROGRAM_ID, PNFT_MARKET_IDS_STRING } from '../constants';
 import { initWrappers } from '../utils/initWrappers';
 import { fetchMarketReserveInfo, fetchReserve, loadWalletKey, loadHoneyProgram, roundHalfDown } from '../utils/programUtils';
 import { getOraclePrice } from './switchboard';
 import { fetchBidsOnChain } from '../helpers';
 import { BN } from '@project-serum/anchor';
-import { executeBid } from '../utils/liquidations/executeBid';
+import { executeBid,  } from '../utils/liquidations/executeBid';
 
 const cluster = 'mainnet-beta';
 const initLiquidation = async (markets: HoneyMarket[], wallet: Keypair, program: any) => {
@@ -67,7 +67,11 @@ const initLiquidation = async (markets: HoneyMarket[], wallet: Keypair, program:
                 };
 
                 obligation.account.loans = PositionInfoList.decode(Buffer.from(obligation.account.loans as any as number[])).map(parsePosition);
+                const multiplier = obligation.account.collateralNftMint.length;
 
+                const honeyReserveMarketObject = new HoneyReserve(client, markets[i], marketReserveInfo[0].reserve);
+                await honeyReserveMarketObject.refresh();
+                const { minCollateralRatio } = honeyReserveMarketObject.getReserveConfig();
                 const loanNoteBalance: TokenAmount = new TokenAmount(obligation.account?.loans[0]?.amount, -reserveInfo.exponent);
                 const totalDebt = loanNoteBalance.mulb(marketReserveInfo[0].loanNoteExchangeRate).divb(new BN(Math.pow(10, 15)).mul(new BN(Math.pow(10, 6))));
 
@@ -78,7 +82,7 @@ const initLiquidation = async (markets: HoneyMarket[], wallet: Keypair, program:
                 //     .div(new BN(10 ** 5)).toNumber() / (10 ** 4);//dividing lamport
 
                 const health:string = getHealthStatus(totalDebt.uiAmountFloat, nftPrice); //TODO: not just nftPrice but with token deposits as collateral
-                const is_risky = (totalDebt.uiAmountFloat / nftPrice * 100) >= 65; // TODO: breaks in bulkloans - revise 
+                const is_risky = (totalDebt.uiAmountFloat / (nftPrice * multiplier) * 100) >= (10000 / minCollateralRatio);
                 
                 if(is_risky) {
                     if(sortedBids.length == 0) { // if there is no bid, execute solvent liquidation
@@ -134,7 +138,8 @@ const initLiquidation = async (markets: HoneyMarket[], wallet: Keypair, program:
                             wallet.publicKey,
                             wallet,
                             cluster,
-                            HONEY_PROGRAM_ID.toString()
+                            HONEY_PROGRAM_ID.toString(),
+                            PNFT_MARKET_IDS_STRING.includes(markets[i].address.toString())                            
                         );
                     }
                 }

@@ -29,7 +29,7 @@ const fetchReserve = async (client: HoneyClient, reserveInfo: CachedReserveInfo)
       throw new Error("wrong reserve!");
     };
     //   console.log('reserve', reserveInfo.reserve.toString());
-    const { data, state } = await HoneyReserve.decodeReserve(client, reserveInfo.reserve);
+    const data = await HoneyReserve.decodeReserve(client, reserveInfo.reserve);
     //   console.log("reserves data", data);
     return data;
 }

@@ -14,7 +14,8 @@ const executeBid = async (
   payer: PublicKey,
   wallet: Keypair, 
   env: string, 
-  programId: string
+  programId: string,
+  pnft?: boolean
 ) => {
 
   try {
@@ -44,33 +45,36 @@ const executeBid = async (
         payer,
         bidder: new PublicKey(bidData.bidder),
     }
-  
-    const tx = await liquidator.executeBid(reserves, params);
 
-    if (tx[0] === 'FAILED') {
-      console.log(`Liquidation failed`);
-      return;
+    if (pnft) {
+      // const tx = await liquidator.executePnftBid(reserves, params);
     } else {
-      const liquidation = new LiquidationModel({
-        marketId: market,
-        obligationId: obligation,
-        collateralNFTMint: nftMint,
-        payer: payer.toString()
-      });
+      const tx = await liquidator.executeBid(reserves, params);
 
-      await liquidation.save().then((res) => {
-        console.log(`Liquidation stored in DB: ${res}`)
-      }).catch((err) => {
-        console.log(`Error storing liquidation ${err}`);
-      })
-      
-      console.log("TxId: ", tx);
-      return;
+      if (tx[0] === 'FAILED') {
+        console.log(`Liquidation failed`);
+        return;
+      } else {
+        const liquidation = new LiquidationModel({
+          marketId: market,
+          obligationId: obligation,
+          collateralNFTMint: nftMint,
+          payer: payer.toString()
+        });
+
+        await liquidation.save().then((res) => {
+          console.log(`Liquidation stored in DB: ${res}`)
+        }).catch((err) => {
+          console.log(`Error storing liquidation ${err}`);
+        })
+        
+        console.log("TxId: ", tx);
+        return;
+      }
     }
   } catch (error) {
       console.log(`An error occurred in executing the liquidation: ${error}`);
       return;
-  }
 }
 
 // testing bids
@@ -223,6 +227,7 @@ async function simulateBidSdk(liquidator: any, reserves: HoneyReserve[], params:
       console.log('error', err)
       return [TxnResponse.Failed, []];
     }
+  }
 }
 
 export {executeBid}
