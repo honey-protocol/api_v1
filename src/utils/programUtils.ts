@@ -1,4 +1,4 @@
-import { HoneyClient, CachedReserveInfo, HoneyReserve, TReserve, MarketReserveInfoList } from "@honey-finance/sdk";
+import { HoneyClient, CachedReserveInfo, HoneyReserve, TReserve } from "@honey-finance/sdk";
 import { Program, AnchorProvider } from "@project-serum/anchor";
 import NodeWallet from "@project-serum/anchor/dist/cjs/nodewallet";
 import { Connection, Keypair, PublicKey } from "@solana/web3.js";
@@ -14,10 +14,10 @@ const fetchMarketReserveInfo = async (honeyProgram: any, marketId: PublicKey): P
   // market info
   const marketValue = await honeyProgram.account.market.fetch(marketId);
   // reserve info
-  const reserveInfoData = new Uint8Array(marketValue.reserves as any as number[]);
-  const reserveInfoList = MarketReserveInfoList.decode(reserveInfoData) as CachedReserveInfo[];
+  // const reserveInfoData = new Uint8Array(marketValue.reserves as any as number[]);
+  // const reserveInfoList = MarketReserveInfoList.decode(reserveInfoData) as CachedReserveInfo[];
   
-  return reserveInfoList;
+  return marketValue.reserves;
 }
 /**
  * @description fetches TReserve

@@ -1,8 +1,8 @@
-import { HoneyClient, CachedReserveInfo, ObligationPositionStruct, PositionInfoList, getHealthStatus, NftPosition, TReserve, LiquidatorClient, withdraw, TokenAmount, HoneyMarket, HoneyReserve} from '@honey-finance/sdk';
+import { CachedReserveInfo, ObligationPositionStruct, getHealthStatus, NftPosition, TReserve, LiquidatorClient, TokenAmount, HoneyMarket, HoneyReserve} from '@honey-finance/sdk';
 import { Keypair, PublicKey } from '@solana/web3.js';
 import { HONEY_PROGRAM_ID, PNFT_MARKET_IDS_STRING } from '../constants';
 import { initWrappers } from '../utils/initWrappers';
-import { fetchMarketReserveInfo, fetchReserve, loadWalletKey, loadHoneyProgram, roundHalfDown } from '../utils/programUtils';
+import { fetchMarketReserveInfo, fetchReserve } from '../utils/programUtils';
 import { getOraclePrice } from './switchboard';
 import { fetchBidsOnChain } from '../helpers';
 import { BN } from '@project-serum/anchor';
@@ -66,7 +66,7 @@ const initLiquidation = async (markets: HoneyMarket[], wallet: Keypair, program:
                     return pos;
                 };
 
-                obligation.account.loans = PositionInfoList.decode(Buffer.from(obligation.account.loans as any as number[])).map(parsePosition);
+                // obligation.account.loans = PositionInfoList.decode(Buffer.from(obligation.account.loans as any as number[])).map(parsePosition);
                 const multiplier = obligation.account.collateralNftMint.length;
 
                 const honeyReserveMarketObject = new HoneyReserve(client, markets[i], marketReserveInfo[0].reserve);
