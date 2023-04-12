@@ -7,6 +7,7 @@ import {
   LiquidatorClient,
   TokenAmount,
   HoneyMarket,
+  PositionInfoList,
   HoneyReserve,
 } from "@honey-finance/sdk";
 import { Keypair, PublicKey } from "@solana/web3.js";
@@ -96,7 +97,7 @@ const initLiquidation = async (
           return pos;
         };
 
-        // obligation.account.loans = PositionInfoList.decode(Buffer.from(obligation.account.loans as any as number[])).map(parsePosition);
+        obligation.account.loans = PositionInfoList.decode(Buffer.from(obligation.account.loans as any as number[])).map(parsePosition);
         const multiplier = obligation.account.collateralNftMint.length;
 
         const honeyReserveMarketObject = new HoneyReserve(
@@ -107,10 +108,12 @@ const initLiquidation = async (
         await honeyReserveMarketObject.refresh();
         const { minCollateralRatio } =
           honeyReserveMarketObject.getReserveConfig();
+
         const loanNoteBalance: TokenAmount = new TokenAmount(
           obligation.account?.loans[0]?.amount,
           -reserveInfo.exponent
         );
+
         const totalDebt = loanNoteBalance
           .mulb(marketReserveInfo[0].loanNoteExchangeRate)
           .divb(new BN(Math.pow(10, 15)).mul(new BN(Math.pow(10, 6))));
