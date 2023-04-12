@@ -144,6 +144,10 @@ const handleFetchAllMarkets = async (req: Request, res: Response, next: NextFunc
   try {
     // init all the honey users per market provided by the client based on their public.key
     // TODO: write functionality in SDK
+    // call database: fetch all the markets
+    // filter market array based on provided array of market ids by client
+    // replace the honeyuser object
+    // return to client
   } catch (error) {
     console.log(`An error occurred inside handlefetchallmarkets: ${error}`);
     return [];
