@@ -126,10 +126,36 @@ const handleFetchMarketsLiquidations = async (req: Request, res: Response, next:
     res.json([]);
   }
 }
+/**
+ * @description
+ * @params
+ * @returns
+*/
+const handleFetchAllMarkets = async (req: Request, res: Response, next: NextFunction) => {
+  // set publickey coming from req. object
+  const publicKey = req.params.publicKey ? req.params.publicKey : false;
+  const arrayOfMarketIds = req.body.marketIds ? req.body.marketIds : false;
+  // if no publickey was provided return err msg
+  if (!publicKey) return {
+    status: 'Failed',
+    message: 'Please provide a public key'
+  }
+
+  try {
+    // init all the honey users per market provided by the client based on their public.key
+    // TODO: write functionality in SDK
+  } catch (error) {
+    console.log(`An error occurred inside handlefetchallmarkets: ${error}`);
+    return [];
+  }
+}
+
+
 export { 
   handleAllMarketsBids, 
   handleSingleMarketBids, 
   handleUpdateMarket,
   handleFetchMarketLiquidations,
-  handleFetchMarketsLiquidations
+  handleFetchMarketsLiquidations,
+  handleFetchAllMarkets
 }

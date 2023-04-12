@@ -5,7 +5,8 @@ import {
   handleSingleMarketBids, 
   handleUpdateMarket, 
   handleFetchMarketLiquidations, 
-  handleFetchMarketsLiquidations
+  handleFetchMarketsLiquidations,
+  handleFetchAllMarkets
 } from '../controller/index'
 
 /** This file contains the routes for the Honey Finance API **/
@@ -51,6 +52,14 @@ router
   .route('/liquidationOverview')
   .get(handleFetchMarketsLiquidations)
 /**
+ * @description 
+ * @params
+ * @returns
+*/
+router
+  .route('/marketData/:publicKey')
+  .get(handleFetchAllMarkets)
+/**
  * @description 404 route
  * @params none
  * @returns descriptive 404 page
@@ -59,6 +68,6 @@ router
   .route('*')
     .get(async (req, res) => {
       res.send('render 404 Honey page: page not found');
-    });
+    })
 
 export { router }

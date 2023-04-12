@@ -12,7 +12,9 @@ import {
   HONEY_PROGRAM_ID,
   MARKET_IDS_STRING
 } from '../constants';
-
+/**
+ * @description this function runs every 2 min via a cron job and fetches the latest market data
+ */ 
 const fetchMarketData = async () => {
   // create connection for fetching of all markets
   const createConnection = () => {
@@ -29,7 +31,7 @@ const fetchMarketData = async () => {
   // if so it updates the data object | if not; injects new entity 
   async function saveOrUpdateMarketDate(fetchedObjects) {
     try {
-      const newlyFetchedMarketObjects = await Promise.all(
+      await Promise.all(
         fetchedObjects.map(async (market) => {
           const existingMarket = await FetchedMarketModel.findOne({ marketId: market.market.address.toString() });
           if (existingMarket) {
