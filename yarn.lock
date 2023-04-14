@@ -827,20 +827,22 @@
   dependencies:
     "@hapi/hoek" "^9.0.0"
 
-"@honey-finance/sdk@^1.1.137":
-  version "1.1.137"
-  resolved "https://registry.yarnpkg.com/@honey-finance/sdk/-/sdk-1.1.137.tgz#5abb230e174896309e6b264b2c2f3d707af5b09b"
-  integrity sha512-gBGak7f7jHZqRO2hRzo7tOrMFPlNC6tAc44iiJWLGQTW8d9bL4fdbCkwI1kfRYccQWL5Nbs1uHiKlgZmidw6Tw==
+"@honey-finance/sdk@^1.1.152":
+  version "1.1.152"
+  resolved "https://registry.yarnpkg.com/@honey-finance/sdk/-/sdk-1.1.152.tgz#3c06efaeea327203c33f469d01c99bb9ded89861"
+  integrity sha512-P2tmPAevflC1tkInk5VEw5CPq6Sz3sYDP8Q8Bbd8hMWB5Dv56pAg4RoM/2Qa/GbM84zRkPMk69C3HUKicpRaSA==
   dependencies:
+    "@metaplex-foundation/js" "^0.18.0"
     "@metaplex-foundation/mpl-token-auth-rules" "^1.0.0"
     "@metaplex-foundation/mpl-token-metadata" "^2.7.0"
+    "@msgpack/msgpack" "^3.0.0-beta2"
     "@project-serum/anchor" "^0.26.0"
     "@project-serum/serum" "^0.13.61"
     "@pythnetwork/client" "^2.5.3"
     "@rollup/plugin-commonjs" "^21.1.0"
     "@solana/buffer-layout" "^4.0.0"
     "@solana/spl-token" "^0.3.7"
-    "@solana/web3.js" "1.36.0"
+    "@solana/web3.js" "^1.75.0"
     "@switchboard-xyz/switchboard-v2" "^0.0.127"
     "@types/chai" "^4.3.0"
     "@types/chai-as-promised" "^7.1.5"
@@ -1507,7 +1509,7 @@
   resolved "https://registry.yarnpkg.com/@metaplex-foundation/cusper/-/cusper-0.0.2.tgz#dc2032a452d6c269e25f016aa4dd63600e2af975"
   integrity sha512-S9RulC2fFCFOQraz61bij+5YCHhSO9llJegK8c8Y6731fSi6snUSQJdCUqYS8AIgR0TKbQvdvgSyIIdbDFZbBA==
 
-"@metaplex-foundation/js@^0.18.3":
+"@metaplex-foundation/js@^0.18.0", "@metaplex-foundation/js@^0.18.3":
   version "0.18.3"
   resolved "https://registry.yarnpkg.com/@metaplex-foundation/js/-/js-0.18.3.tgz#d61d25b9e3ab91d069cd6a87fa9eb5d01ce56ed3"
   integrity sha512-rqI8vI+V5Bt3pgrv8E7leqR8gxxdw6Q/pbWg4EznbuYSmpNGRQkjMaZE0C+rQrmtQbMqUD9rUsUuYOoppSlI4A==
@@ -2388,26 +2390,6 @@
     superstruct "^0.14.2"
     tweetnacl "^1.0.0"
 
-"@solana/web3.js@1.36.0":
-  version "1.36.0"
-  resolved "https://registry.yarnpkg.com/@solana/web3.js/-/web3.js-1.36.0.tgz#79d7d5217b49b80139f4de68953adc5b9a9a264f"
-  integrity sha512-RNT1451iRR7TyW7EJKMCrH/0OXawIe4zVm0DWQASwXlR/u1jmW6FrmH0lujIh7cGTlfOVbH+2ZU9AVUPLBFzwA==
-  dependencies:
-    "@babel/runtime" "^7.12.5"
-    "@ethersproject/sha2" "^5.5.0"
-    "@solana/buffer-layout" "^3.0.0"
-    bn.js "^5.0.0"
-    borsh "^0.4.0"
-    bs58 "^4.0.1"
-    buffer "6.0.1"
-    cross-fetch "^3.1.4"
-    jayson "^3.4.4"
-    js-sha3 "^0.8.0"
-    rpc-websockets "^7.4.2"
-    secp256k1 "^4.0.2"
-    superstruct "^0.14.2"
-    tweetnacl "^1.0.0"
-
 "@solana/web3.js@1.66.2":
   version "1.66.2"
   resolved "https://registry.yarnpkg.com/@solana/web3.js/-/web3.js-1.66.2.tgz#80b43c5868b846124fe3ebac7d3943930c3fa60c"
@@ -2445,6 +2427,28 @@
     borsh "^0.7.0"
     bs58 "^4.0.1"
     buffer "6.0.1"
+    fast-stable-stringify "^1.0.0"
+    jayson "^3.4.4"
+    node-fetch "^2.6.7"
+    rpc-websockets "^7.5.1"
+    superstruct "^0.14.2"
+
+"@solana/web3.js@^1.75.0":
+  version "1.75.0"
+  resolved "https://registry.yarnpkg.com/@solana/web3.js/-/web3.js-1.75.0.tgz#824c6f78865007bca758ca18f268d6f7363b42e5"
+  integrity sha512-rHQgdo1EWfb+nPUpHe4O7i8qJPELHKNR5PAZRK+a7XxiykqOfbaAlPt5boDWAGPnYbSv0ziWZv5mq9DlFaQCxg==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+    "@noble/ed25519" "^1.7.0"
+    "@noble/hashes" "^1.1.2"
+    "@noble/secp256k1" "^1.6.3"
+    "@solana/buffer-layout" "^4.0.0"
+    agentkeepalive "^4.2.1"
+    bigint-buffer "^1.1.5"
+    bn.js "^5.0.0"
+    borsh "^0.7.0"
+    bs58 "^4.0.1"
+    buffer "6.0.3"
     fast-stable-stringify "^1.0.0"
     jayson "^3.4.4"
     node-fetch "^2.6.7"

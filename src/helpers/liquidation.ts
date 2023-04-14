@@ -8,6 +8,7 @@ import {
   TokenAmount,
   HoneyMarket,
   HoneyReserve,
+  PositionInfoList,
 } from "@honey-finance/sdk";
 import { Keypair, PublicKey } from "@solana/web3.js";
 import { HONEY_PROGRAM_ID, PNFT_MARKET_IDS_STRING } from "../constants";
@@ -96,7 +97,9 @@ const initLiquidation = async (
           return pos;
         };
 
-        // obligation.account.loans = PositionInfoList.decode(Buffer.from(obligation.account.loans as any as number[])).map(parsePosition);
+        obligation.account.loans = PositionInfoList.decode(
+          Buffer.from(obligation.account.loans as any as number[])
+        ).map(parsePosition);
         const multiplier = obligation.account.collateralNftMint.length;
 
         const honeyReserveMarketObject = new HoneyReserve(
