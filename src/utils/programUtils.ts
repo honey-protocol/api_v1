@@ -5,11 +5,14 @@ import {
   TReserve,
   MarketReserveInfoList,
 } from "@honey-finance/sdk";
-import { Program, AnchorProvider } from "@project-serum/anchor";
+import { Program, AnchorProvider, Idl } from "@project-serum/anchor";
 import NodeWallet from "@project-serum/anchor/dist/cjs/nodewallet";
 import { Connection, Keypair, PublicKey } from "@solana/web3.js";
 import { readFileSync } from "fs";
 import { CLUSTERS, HONEY_PROGRAM_ID } from "../constants";
+import { Honey } from "../artifacts/honey";
+import HoneyIdl from "../artifacts/honey.json";
+
 var web3 = require("@solana/web3.js");
 /**
  * @description fetches the reserve info of a specific market
@@ -80,10 +83,7 @@ const loadHoneyProgram = async (walletKeyPair: Keypair, cluster: string) => {
     walletWrapper,
     AnchorProvider.defaultOptions()
   );
-  console.log("fetchingIDL of", HONEY_PROGRAM_ID.toString());
-  const idl = await Program.fetchIdl(HONEY_PROGRAM_ID, provider)!;
-  const program = new Program(idl as any, HONEY_PROGRAM_ID, provider);
-  // console.log('program id from anchor', program.programId.toBase58());
+  const program = new Program(HoneyIdl as Idl, HONEY_PROGRAM_ID, provider);
   return program;
 };
 
