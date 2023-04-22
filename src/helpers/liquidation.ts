@@ -100,7 +100,10 @@ const initLiquidation = async (
         obligation.account.loans = PositionInfoList.decode(
           Buffer.from(obligation.account.loans as any as number[])
         ).map(parsePosition);
-        const multiplier = obligation.account.collateralNftMint.length;
+        console.log(obligation.account.collateralNftMint);
+        const multiplier = obligation.account.collateralNftMint.filter(
+          (key) => key.toString() != PublicKey.default.toString()
+        ).length;
 
         const honeyReserveMarketObject = new HoneyReserve(
           client,
@@ -118,18 +121,13 @@ const initLiquidation = async (
           .mulb(marketReserveInfo[0].loanNoteExchangeRate)
           .divb(new BN(Math.pow(10, 15)).mul(new BN(Math.pow(10, 6))));
 
-        // const totalDebt = marketReserveInfo[0].loanNoteExchangeRate
-        //     .mul(obligation.account?.loans[0]?.amount)
-        //     .div(new BN(10 ** 15))
-        //     .div(new BN(10 ** 6))//!!
-        //     .div(new BN(10 ** 5)).toNumber() / (10 ** 4);//dividing lamport
-
         const health: string = getHealthStatus(
           totalDebt.uiAmountFloat,
           nftPrice
-        ); //TODO: not just nftPrice but with token deposits as collateral
+        );
+
         const is_risky =
-          (totalDebt.uiAmountFloat / (nftPrice * multiplier)) * 100 >=
+          totalDebt.uiAmountFloat / (nftPrice * multiplier) >=
           10000 / minCollateralRatio;
 
         if (is_risky) {
@@ -137,17 +135,17 @@ const initLiquidation = async (
             // if there is no bid, execute solvent liquidation
             console.log("executing elixir liquidation");
             // await elixirLiquidate(
-            //     provider,
-            //     program,
-            //     wallet,
-            //     markets[i].address.toString(),
-            //     HONEY_PROGRAM_ID.toString(),
-            //     cluster,
-            //     nft.toString(),
-            //     obligation.account.owner.toString(),
-            //     4,
-            //     // verifiedCreator
-            // )
+            //   provider,
+            //   program,
+            //   wallet,
+            //   markets[i].address.toString(),
+            //   HONEY_PROGRAM_ID.toString(),
+            //   cluster,
+            //   nft.toString(),
+            //   obligation.account.owner.toString(),
+            //   4
+            //   // verifiedCreator
+            // );
           } else {
             const highestBid = sortedBids.pop();
             // TODO: @yuri - why default ltv of 40?
