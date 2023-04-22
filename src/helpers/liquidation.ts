@@ -131,21 +131,21 @@ const initLiquidation = async (
           10000 / minCollateralRatio;
 
         if (is_risky) {
-          if (sortedBids.length == 0) {
+          if (totalDebt.uiAmountFloat > sortedBids[0].bidLimit) {
             // if there is no bid, execute solvent liquidation
             console.log("executing elixir liquidation");
-            // await elixirLiquidate(
-            //   provider,
-            //   program,
-            //   wallet,
-            //   markets[i].address.toString(),
-            //   HONEY_PROGRAM_ID.toString(),
-            //   cluster,
-            //   nft.toString(),
-            //   obligation.account.owner.toString(),
-            //   4
-            //   // verifiedCreator
-            // );
+            await elixirLiquidate(
+              provider,
+              program,
+              wallet,
+              markets[i].address.toString(),
+              HONEY_PROGRAM_ID.toString(),
+              cluster,
+              nft.toString(),
+              obligation.account.owner.toString(),
+              4
+              // verifiedCreator
+            );
           } else {
             const highestBid = sortedBids.pop();
             // TODO: @yuri - why default ltv of 40?
@@ -160,20 +160,6 @@ const initLiquidation = async (
             };
 
             riskyPositions.push(position);
-
-            // console.log('executeBid param',
-            //     // liquidatorClient,
-            //     position.highest_bid / LAMPORTS_PER_SOL,
-            //     HONEY_MARKET_ID.toString(),
-            //     position.obligation,
-            //     marketReserveInfo[0].reserve.toString(),
-            //     obligation.account.collateralNftMint[0].toString(),
-            //     highestBid.bid,
-            //     wallet.publicKey.toString(),
-            //     // wallet,
-            //     // env,
-            //     // HONEY_PROGRAM_ID.toString()
-            // );
             console.log("execute auction liquidation");
 
             await executeBid(
