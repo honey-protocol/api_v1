@@ -18,6 +18,7 @@ import { getOraclePrice } from "./switchboard";
 import { fetchBidsOnChain } from "../helpers";
 import { BN } from "@project-serum/anchor";
 import { executeBid } from "../utils/liquidations/executeBid";
+import { elixirLiquidate } from "../utils/liquidations/elixirLiquidate";
 
 const cluster = "mainnet-beta";
 const initLiquidation = async (
