@@ -1,4 +1,4 @@
-import { NATIVE_MINT, Token, TOKEN_PROGRAM_ID, u64 } from "@solana/spl-token";
+// import { NATIVE_MINT, Token, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { Connection, Keypair, PublicKey, Signer } from "@solana/web3.js";
 import { CLUSTERS, DEFAULT_CLUSTER, HONEY_PROGRAM_ID } from "../constants";
 import * as anchor from '@project-serum/anchor';
@@ -72,55 +72,55 @@ export function toPublicKeys(obj: Record<string, string | PublicKey | HasPublicK
     return newObj;
 }
 
-export class TestToken extends Token {
-    decimals: number;
+// export class TestToken extends Token {
+//     decimals: number;
 
-    constructor(conn: Connection, token: Token, decimals: number) {
-        super(conn, token.publicKey, token.programId, token.payer);
-        this.decimals = decimals;
-    }
+//     constructor(conn: Connection, token: Token, decimals: number) {
+//         super(conn, token.publicKey, token.programId, token.payer);
+//         this.decimals = decimals;
+//     }
 
-    /**
-     * Convert a token amount to the integer format for the mint
-     * @param token The token mint
-     * @param amount The amount of tokens
-     */
-    // amount(amount: u64 | number): u64 {
-    //     if (typeof amount == "number") {
-    //         amount = new u64(amount);
-    //     }
+//     /**
+//      * Convert a token amount to the integer format for the mint
+//      * @param token The token mint
+//      * @param amount The amount of tokens
+//      */
+//     // amount(amount: u64 | number): u64 {
+//     //     if (typeof amount == "number") {
+//     //         amount = new u64(amount);
+//     //     }
 
-    //     const one_unit = new u64(10).pow(new u64(this.decimals));
-    //     const value = amount.mul(one_unit);
+//     //     const one_unit = new u64(10).pow(new u64(this.decimals));
+//     //     const value = amount.mul(one_unit);
 
-    //     return amount.mul(one_unit);
-    // }
-}
+//     //     return amount.mul(one_unit);
+//     // }
+// }
 
-export async function createNativeToken(conn: Connection, authority: Keypair) {
-    const token = new Token(
-        conn,
-        NATIVE_MINT,
-        TOKEN_PROGRAM_ID,
-        authority as Signer
-    );
+// export async function createNativeToken(conn: Connection, authority: Keypair) {
+//     const token = new Token(
+//         conn,
+//         NATIVE_MINT,
+//         TOKEN_PROGRAM_ID,
+//         authority as Signer
+//     );
 
-    return new TestToken(conn, token, 9);
-}
+//     return new TestToken(conn, token, 9);
+// }
 // TODO: validate with Brian if values are still correct
-export const reserveConfig = {
-    utilizationRate1: 8500,
-    utilizationRate2: 9500,
-    borrowRate0: 20000,
-    borrowRate1: 20000,
-    borrowRate2: 20000,
-    borrowRate3: 20000,
-    minCollateralRatio: 12500,
-    liquidationPremium: 100,
-    manageFeeRate: 50,
-    manageFeeCollectionThreshold: new anchor.BN(10),
-    loanOriginationFee: 10,
-    liquidationSlippage: 300,
-    liquidationDexTradeMax: new anchor.BN(100),
-    confidenceThreshold: 200,
-} as ReserveConfig;
+// export const reserveConfig = {
+//     utilizationRate1: 8500,
+//     utilizationRate2: 9500,
+//     borrowRate0: 20000,
+//     borrowRate1: 20000,
+//     borrowRate2: 20000,
+//     borrowRate3: 20000,
+//     minCollateralRatio: 12500,
+//     liquidationPremium: 100,
+//     manageFeeRate: 50,
+//     manageFeeCollectionThreshold: new anchor.BN(10),
+//     loanOriginationFee: 10,
+//     liquidationSlippage: 300,
+//     liquidationDexTradeMax: new anchor.BN(100),
+//     confidenceThreshold: 200,
+// } as ReserveConfig;
