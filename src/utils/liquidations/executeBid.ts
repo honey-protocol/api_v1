@@ -47,7 +47,29 @@ const executeBid = async (
     }
 
     if (pnft) {
-      // const tx = await liquidator.executePnftBid(reserves, params);
+      const tx = await liquidator.executePnftBid(reserves, params);
+
+      if (tx[0] === 'FAILED') {
+        console.log(`Liquidation failed`);
+        return;
+      } else {
+        const liquidation = new LiquidationModel({
+          marketId: market,
+          obligationId: obligation,
+          collateralNFTMint: nftMint,
+          payer: payer.toString(),
+          isPNFT: true
+        });
+
+        await liquidation.save().then((res) => {
+          console.log(`Liquidation stored in DB: ${res}`)
+        }).catch((err) => {
+          console.log(`Error storing liquidation ${err}`);
+        })
+        
+        console.log("TxId: ", tx);
+        return;
+      }
     } else {
       const tx = await liquidator.executeBid(reserves, params);
 
@@ -59,7 +81,8 @@ const executeBid = async (
           marketId: market,
           obligationId: obligation,
           collateralNFTMint: nftMint,
-          payer: payer.toString()
+          payer: payer.toString(),
+          isPNFT: false
         });
 
         await liquidation.save().then((res) => {
