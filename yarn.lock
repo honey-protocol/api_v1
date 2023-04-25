@@ -827,10 +827,10 @@
   dependencies:
     "@hapi/hoek" "^9.0.0"
 
-"@honey-finance/sdk@^1.1.159":
-  version "1.1.159"
-  resolved "https://registry.yarnpkg.com/@honey-finance/sdk/-/sdk-1.1.159.tgz#0113630903e0d3f8dff3a9bc613fb1b8de470e11"
-  integrity sha512-xkgoU/FJKb+R+lU2/2NFXPqFlNzrP0SPW3mdOvD99oHukd+kgcW+gLhKa/sc8eojiqpDyK4p2K6+n2VuCJXCow==
+"@honey-finance/sdk@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@honey-finance/sdk/-/sdk-1.2.0.tgz#9fd6292953913359727552db31caefb73f26cf89"
+  integrity sha512-KRMxolz3kVkqDdPpzZt53LwvkFhxq+cbqKGO3Pjq677Naxm/YB6FOA/rTkMhzQy/jDYtS3yKvNxTLCYitZwTWQ==
   dependencies:
     "@metaplex-foundation/js" "^0.18.0"
     "@metaplex-foundation/mpl-token-auth-rules" "^1.0.0"
