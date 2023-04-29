@@ -25,8 +25,8 @@ app.use(helmet());
 app.use(xss());
 // config rate limit
 const limiter = rateLimit({
-  windowMs: 10 * 60 * 1000, // 10 minutes 100 request
-  max: 100
+  windowMs: 10 * 60 * 1000, // 10 minutes 1200 request: 120 per minute per user 
+  max: 1200
 });
 // init rate limit
 app.use(limiter);
