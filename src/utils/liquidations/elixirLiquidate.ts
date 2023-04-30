@@ -24,6 +24,7 @@ import { elixirSell } from "./elixir/functions/sell";
 import { BRIDGESPLIT_API, PROGRAM_IDS } from "./elixir/utils/constants";
 
 import idl from "./elixir/idl/idl.json";
+import { LiquidationModel } from "../../db/models/LiquidationModel";
 
 async function getPriceAndPoolMintFromElixir(
   nft_name: string
@@ -301,6 +302,22 @@ export async function elixirLiquidate(
         skipPreflight: true,
       });
       console.log("liquidated!", liquidateTxid);
+
+      const liquidation = new LiquidationModel({
+          marketId: marketPkString,
+          obligationId: obligation,
+          collateralNFTMint: nftMint,
+          payer: 'Elixir',
+          isPNFT: true
+        });
+
+        await liquidation.save().then((res) => {
+          console.log(`Liquidation stored in DB: ${res}`)
+        }).catch((err) => {
+          console.log(`Error storing liquidation ${err}`);
+        })
+        
+        return;
     } catch (err) {
       console.log("Error executing liquidateElixir", err);
     }
