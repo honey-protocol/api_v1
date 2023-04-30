@@ -5,7 +5,8 @@ interface LiquidationM {
   obligationId: string,
   collateralNFTMint: string,
   payer: string,
-  isPNFT: boolean
+  isPNFT: boolean,
+  previousOwner: string
 }
 // init the schema based on interface
 const liquidationSchema = new Schema<LiquidationM>({
@@ -27,6 +28,10 @@ const liquidationSchema = new Schema<LiquidationM>({
   },
   isPNFT: {
     type: Boolean,
+    required: true
+  },
+  previousOwner: {
+    type: String,
     required: true
   }
 })

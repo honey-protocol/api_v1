@@ -15,6 +15,7 @@ const executeBid = async (
   wallet: Keypair, 
   env: string, 
   programId: string,
+  previousOwner: string,
   pnft?: boolean
 ) => {
 
@@ -82,7 +83,8 @@ const executeBid = async (
           obligationId: obligation,
           collateralNFTMint: nftMint,
           payer: payer.toString(),
-          isPNFT: false
+          isPNFT: false,
+          previousOwner
         });
 
         await liquidation.save().then((res) => {

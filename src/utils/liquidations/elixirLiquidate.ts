@@ -308,7 +308,8 @@ export async function elixirLiquidate(
           obligationId: obligation,
           collateralNFTMint: nftMint,
           payer: 'Elixir',
-          isPNFT: true
+          isPNFT: true,
+          nft_name
         });
 
         await liquidation.save().then((res) => {

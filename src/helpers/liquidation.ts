@@ -101,7 +101,7 @@ const initLiquidation = async (
         obligation.account.loans = PositionInfoList.decode(
           Buffer.from(obligation.account.loans as any as number[])
         ).map(parsePosition);
-        console.log(obligation.account.collateralNftMint);
+        // console.log(obligation.account.collateralNftMint);
         const multiplier = obligation.account.collateralNftMint.filter(
           (key) => key.toString() != PublicKey.default.toString()
         ).length;
@@ -174,7 +174,8 @@ const initLiquidation = async (
               wallet,
               cluster,
               HONEY_PROGRAM_ID.toString(),
-              PNFT_MARKET_IDS_STRING.includes(markets[i].address.toString())
+              obligation.account.owner.toString(),
+              PNFT_MARKET_IDS_STRING.includes(markets[i].address.toString()),
             );
           }
         }
