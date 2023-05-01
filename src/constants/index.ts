@@ -45,6 +45,23 @@ export const MARKET_IDS_STRING: string[] = [
   "7pfaZcAqpWRHpEqGMwPQrn5tj5WVQ48F4PrAtFLuS1P7",
   "HyUDgtmrERNC6xnPUjxs7fvkB6rX5esqvP5LW4LiXzrV",
 ];
+// Names of all markets by id
+export const HONEY_MARKET_NAMES: { [key: string]: string }  = {
+  "6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3" : "Honey Genesis Bee",
+  "Bw77MGpg189EaATjN67WXcnp3c4544LhKoV4Ftmdg4C" : "Pesky Penguins",
+  "H2H2pJuccdvpET9A75ajB3GgdYdCUL4T3kiwUMA6DJ7q": "Lifninity Flares",
+  "Bxk1JQCbVjpeFnjzvH5n9bepnZeHjRADUFwZiVC7L5Gq": "OG Atadians",
+  "F8rZviSSuqgkTsjMeoyrTUSNSqh7yNDCAozJkxm7eujY": "Borrito Boys",
+  "GrKPvcdHVb4cwR5a2CCgCTvdkSqhNDRgSUiUVzXRWLk6": "Blocksmiths",
+  "5UKRRSxbi4PgPnQU2ZqtukUxd1fyN6ydn1hoxivP46A8": "Ovols",
+  "GAqyPziKPwVpwKaeqPhEsxiy6MwQ2bvtodruWErpLVKo": "Droids",
+  "2dxJ4eMkhMxm1ZqpAhKsjunvyziuq1JRnuHaqKFRY8et": "Vandals",
+  "FTBLaLcrx1aXALW2UEpu8a6HLRVFATezkK12wCABPAiA": "Ukiyo",
+  "Dmngi1MDEQU9fm6sX39EuyT3EpYEmXYuyg56uEjVCkD6": "Marshies",
+  "5ZxAjKpbYje5fCxhvnRYxbMh6XSZm5Cd7RA9mMGb1DLY": "Heavenland",
+  "7pfaZcAqpWRHpEqGMwPQrn5tj5WVQ48F4PrAtFLuS1P7": "Drunken Ape Social Club",
+  "HyUDgtmrERNC6xnPUjxs7fvkB6rX5esqvP5LW4LiXzrV": "Wolf Capital",
+};
 
 // Case-sensitive
 export const PNFT_MARKET_IDS_STRING: string[] = [];

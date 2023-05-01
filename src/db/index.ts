@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 require('dotenv').config();
 
 const connectDB = async () => {
-  mongoose.connect(process.env.DB_CONNECTION_STRING)
+  mongoose.connect(process.env.DB_CONNECTION_STRING_TEST)
   .then(() => {
     console.log('DBconnection established')
   })

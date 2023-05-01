@@ -5,14 +5,13 @@ import {
   fetchMarketReserveInfo,
   fetchReserve,
 } from "../utils/programUtils";
-import { HONEY_MARKET_IDS, HONEY_PROGRAM_ID } from "../constants";
+import { HONEY_MARKET_IDS, HONEY_PROGRAM_ID, HONEY_MARKET_NAMES } from "../constants";
 var keypairPath = "./keypair.json";
 import { initWrappers } from "../utils/initWrappers";
 import { Keypair, PublicKey } from "@solana/web3.js";
 import { findBidAccount } from "./web3";
 import { BN } from "@project-serum/anchor";
 import cron from "node-cron";
-
 // Common imports for dialect
 import {
   AddressType,
@@ -96,9 +95,10 @@ const checkForOutbid = async (bid: string, bid_limit: string, dapp: Dapp) => {
   if (bids.length > 0) {
     const outbid = bids[0];
     const title = "Honey Finance";
+    const name = HONEY_MARKET_NAMES.market_id.toString()
     await dapp.messages.send({
       title,
-      message: "You have been outbid",
+      message: `You have been outbid in the ${name} market.`,
       recipient: outbid.bidder,
     });
   }
