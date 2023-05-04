@@ -24,6 +24,7 @@ import {
 } from "@dialectlabs/sdk";
 import { initLiquidation } from "./liquidation";
 import { initDialectListeners } from "./dialect";
+import { fetchMarketData } from "./fetchedMarketData";
 
 // TODO: switch to devnet for local testing
 const cluster = "mainnet-beta"; //mainnet-beta, devnet, testnet
@@ -167,6 +168,7 @@ const initProgram = async () => {
       initLiquidation(markets, wallet, program).catch((e) => {
         console.log(`Error executing liquidation: ${e}`);
       });
+      fetchMarketData();
     });
   });
 
