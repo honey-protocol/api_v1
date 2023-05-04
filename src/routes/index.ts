@@ -5,7 +5,8 @@ import {
   handleSingleMarketBids, 
   handleUpdateMarket, 
   handleFetchMarketLiquidations, 
-  handleFetchMarketsLiquidations
+  handleFetchMarketsLiquidations,
+  fetchMarketLevelData
 } from '../controller/index'
 
 /** This file contains the routes for the Honey Finance API **/
@@ -50,6 +51,14 @@ router
 router
   .route('/liquidationOverview')
   .get(handleFetchMarketsLiquidations)
+/**
+ * @description fetches market level data
+ * @params none
+ * @returns array of objects each object representing a market - with market level data
+*/
+router
+  .route('/marketData')
+  .get(fetchMarketLevelData)
 /**
  * @description 404 route
  * @params none
