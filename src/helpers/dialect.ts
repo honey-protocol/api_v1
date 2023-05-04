@@ -10,6 +10,7 @@ import { loadWalletKey, loadHoneyProgram } from '../utils/programUtils';
 
 import { createDappIfAbsent } from '../utils/dialectClient';
 
+import { HONEY_MARKET_NAMES } from '../constants/index'
 const dialectWalletPath = './monitoring-service-key.json';
 const cluster = 'mainnet-beta';
 // Solana-specific imports
@@ -43,17 +44,33 @@ const initDialectListeners = async () => {
       wallet: NodeDialectSolanaWalletAdapter.create(dialectWallet) as any,
     })
   );
-  // console.log('dapps', await sdk.dapps.findAll());
+  //console.log('dapps', await sdk.dapps.findAll());
 
-  // console.log('addresses', await sdk.wallet.addresses.findAll());
+  //console.log('addresses', await sdk.wallet.addresses.findAll());
 
   const dapp = await createDappIfAbsent('Honey Finance', '', sdk);
-  // console.log('dapp', dapp)
+  console.log('dapp', dapp)
+
+  //Liquidation Listeners
 
   let listenerRevokeBid = dialectProgram.addEventListener(
     'RevokeBidEvent',
     async (event, slot) => {
-      console.log('RevokeBidEvent');
+      const title = 'Honey Finance';
+      const amount = event.bidLimit / web3.LAMPORTS_PER_SOL
+      console.log(amount)
+      const rounded_amount = amount.toString()
+      console.log(rounded_amount)
+      //ToDO: Add market name.
+      const message = `Your bid of ${rounded_amount} SOL in the ... market has been revoked`
+      const recipient = event.bidder.toString();
+
+      dapp.messages.send({
+        title: title,
+        message: message,
+        recipient: recipient
+      })
+      console.log("Message Send!")
     }
   );
 
@@ -62,11 +79,9 @@ const initDialectListeners = async () => {
     async (event, slot) => {
       console.log('PlaceBidEvent', event);
       const title = 'Honey Finance';
-      
-      console.log(new BN(event.bid_limit).toString())
-      const amount = event.bid_limit / web3.LAMPORTS_PER_SOL
+      const amount = event.bidLimit / web3.LAMPORTS_PER_SOL
       console.log(amount)
-      const rounded_amount = amount.toPrecision(3)
+      const rounded_amount = amount.toString()
       console.log(rounded_amount)
       //ToDO: Add market name.
       const message = `You have placed a liquidation bid of ${rounded_amount} SOL in the ... market`
@@ -81,6 +96,7 @@ const initDialectListeners = async () => {
       await checkForOutbid(event.bid, event.bidLimit, dapp);
     }
   );
+  
 
   // Message to Bid owner
   let listenerExecuteBid = dialectProgram.addEventListener(
@@ -98,8 +114,6 @@ const initDialectListeners = async () => {
         message: message,
         recipient: event.bid.bidder
       })
-
-
     }
   );
 
@@ -110,6 +124,9 @@ const initDialectListeners = async () => {
       await checkForOutbid(event.bid, event.bidLimit, dapp);
     }
   );
+
+
+  // Borrowing and Lending Listeners
 
   let withdrawEvent: string;
   let depositEvent: string;
@@ -132,9 +149,10 @@ const initDialectListeners = async () => {
 
       depositEvent = event;
       depositedAt = Date.now();
-
+      const market = event.market.toString()
+      const market_name = HONEY_MARKET_NAMES[market]
       const title = 'Honey Finance';
-      const message = 'You have deposited an nft';
+      const message = `You have deposited an nft in the ${market_name} market.`;
       const recipient = event.depositor.toString();
 
       dapp.messages.send({
@@ -168,8 +186,9 @@ const initDialectListeners = async () => {
         return;
       borrowEvent = event;
       borrowedAt = Date.now();
+      console.log(typeof(event.debt))
       const debt = event.debt / web3.LAMPORTS_PER_SOL;
-      const rounded_debt = debt.toPrecision(4);
+      const rounded_debt = debt.toString();
       const title = 'Honey Finance';
       //TODO: Add solscan tx, and market name.
       const message = `You have borrowed ${rounded_debt} SOL`;
@@ -198,9 +217,10 @@ const initDialectListeners = async () => {
 
       withdrawEvent = event;
       withdrewAt = Date.now();
-
+      const market = event.market.toString()
+      const market_name = HONEY_MARKET_NAMES[market]
       const title = 'Honey Finance';
-      const message = 'You have claimed your nft';
+      const message = `You have claimed your nft from the ${market_name} market.`;
       const recipient = event.depositor.toString();
 
       dapp.messages.send({
