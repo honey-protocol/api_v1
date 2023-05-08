@@ -142,8 +142,8 @@ const initLiquidation = async (
               markets[i].address.toString(),
               HONEY_PROGRAM_ID.toString(),
               cluster,
-              nft.toString(),
               obligation.account.owner.toString(),
+              nft.toString(),
               4,
               totalDebt.uiAmountFloat
               // verifiedCreator
