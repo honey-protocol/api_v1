@@ -144,7 +144,8 @@ const initLiquidation = async (
               cluster,
               nft.toString(),
               obligation.account.owner.toString(),
-              4
+              4,
+              totalDebt.uiAmountFloat
               // verifiedCreator
             );
           } else {
@@ -175,6 +176,7 @@ const initLiquidation = async (
               cluster,
               HONEY_PROGRAM_ID.toString(),
               obligation.account.owner.toString(),
+              totalDebt.uiAmountFloat,
               PNFT_MARKET_IDS_STRING.includes(markets[i].address.toString()),
             );
           }

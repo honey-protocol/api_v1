@@ -6,7 +6,8 @@ interface LiquidationM {
   collateralNFTMint: string,
   payer: string,
   isPNFT: boolean,
-  previousOwner: string
+  previousOwner: string,
+  debtAtTimeOfLiquidation: number,
 }
 // init the schema based on interface
 const liquidationSchema = new Schema<LiquidationM>({
@@ -33,7 +34,13 @@ const liquidationSchema = new Schema<LiquidationM>({
   previousOwner: {
     type: String,
     required: true
+  },
+  debtAtTimeOfLiquidation: {
+    type: Number,
+    required: false
   }
+}, {
+  timestamps: true
 })
 // create a model based on the market schema 
 const LiquidationModel = model<LiquidationM>('LiquidationModel', liquidationSchema, 'liquidations');

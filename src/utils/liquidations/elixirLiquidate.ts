@@ -57,6 +57,7 @@ export async function elixirLiquidate(
   depositor: string,
   nft_name: string,
   slippage_bps: number,
+  debtAtTimeOfLiquidation: number,
   verifiedCreator?: string
 ): Promise<void> {
   const [minimumSol, poolMintAddress] = await getPriceAndPoolMintFromElixir(
@@ -309,7 +310,8 @@ export async function elixirLiquidate(
           collateralNFTMint: nftMint,
           payer: 'Elixir',
           isPNFT: true,
-          nft_name
+          nft_name,
+          debtAtTimeOfLiquidation
         });
 
         await liquidation.save().then((res) => {
