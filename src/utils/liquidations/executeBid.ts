@@ -61,6 +61,7 @@ const executeBid = async (
           collateralNFTMint: nftMint,
           payer: payer.toString(),
           isPNFT: true,
+          previousOwner,
           debtAtTimeOfLiquidation
         });
 
