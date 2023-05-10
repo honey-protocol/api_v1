@@ -56,7 +56,6 @@ export async function elixirLiquidate(
   nftMint: string,
   depositor: string,
   nft_name: string,
-  slippage_bps: number,
   debtAtTimeOfLiquidation: number,
   verifiedCreator?: string
 ): Promise<void> {

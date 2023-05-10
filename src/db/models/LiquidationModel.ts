@@ -13,27 +13,27 @@ interface LiquidationM {
 const liquidationSchema = new Schema<LiquidationM>({
   marketId: {
     type: String,
-    required: true
+    required: false
   },
   obligationId: {
     type: String,
-    required: true
+    required: false
   },
   collateralNFTMint: {
     type: String,
-    required: true
+    required: false
   },
   payer: {
     type: String,
-    required: true
+    required: false
   },
   isPNFT: {
     type: Boolean,
-    required: true
+    required: false
   },
   previousOwner: {
     type: String,
-    required: true
+    required: false
   },
   debtAtTimeOfLiquidation: {
     type: Number,
