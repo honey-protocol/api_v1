@@ -59,25 +59,25 @@ export async function elixirLiquidate(
   debtAtTimeOfLiquidation: number,
   verifiedCreator?: string
 ): Promise<void> {
-  const [minimumSol, poolMintAddress] = await getPriceAndPoolMintFromElixir(
-    nft_name
-  );
-  const poolMint = new PublicKey(poolMintAddress);
-  console.log("minimum sol = ", minimumSol);
-  console.log("poolMint = ", poolMintAddress);
-  // const program = await loadHoneyProgram(wallet, env);
-  const { client, user, reserves } = await initWrappers(
-    wallet,
-    env,
-    honeyProgram.programId.toString(),
-    marketPkString
-  );
 
-  // 1. Withdraw nft from HoneyProgram to DAO
-  const nftATA: PublicKey | undefined = await getAssociatedTokenAddress(
-    new PublicKey(nftMint),
-    wallet.publicKey
-  );
+  try {
+    const [minimumSol, poolMintAddress] = await getPriceAndPoolMintFromElixir(nft_name);
+    const poolMint = new PublicKey(poolMintAddress);
+    console.log("minimum sol = ", minimumSol);
+    console.log("poolMint = ", poolMintAddress);
+    // const program = await loadHoneyProgram(wallet, env);
+    const { client, user, reserves } = await initWrappers(
+      wallet,
+      env,
+      honeyProgram.programId.toString(),
+      marketPkString
+    );
+
+    // 1. Withdraw nft from HoneyProgram to DAO
+    const nftATA: PublicKey | undefined = await getAssociatedTokenAddress(
+      new PublicKey(nftMint),
+      wallet.publicKey
+    );
 
   if (!nftATA) {
     console.error(`Could not find the associated token account: ${nftATA}`);
@@ -325,5 +325,8 @@ export async function elixirLiquidate(
     }
   } else {
     console.log("failed to sell");
+  } 
+  } catch (error) {
+  console.log(`Top level error in elixir liquidate: ${error}`)    
   }
 }

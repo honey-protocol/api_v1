@@ -29,11 +29,11 @@ const initLiquidation = async (
   console.log("initting liquidation");
 
   if (!wallet || !program) {
-    console.log("wallet and program not ready yet");
+console.log("wallet and program not ready yet");
     return;
   }
-
-  for (let i = 0; i < markets.length; i++) {
+  try {
+      for (let i = 0; i < markets.length; i++) {
     // inits the honey objects and Anchor provider
     const { client, provider } = await initWrappers(
       wallet,
@@ -181,6 +181,9 @@ const initLiquidation = async (
         }
       }
     }
+  }
+  } catch (error) {
+        console.log(`Errro running pnft: ${error}`);
   }
 };
 
