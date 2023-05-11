@@ -16,6 +16,7 @@ const executeBid = async (
   env: string, 
   programId: string,
   previousOwner: string,
+  debtAtTimeOfLiquidation: number,
   pnft?: boolean
 ) => {
 
@@ -59,7 +60,9 @@ const executeBid = async (
           obligationId: obligation,
           collateralNFTMint: nftMint,
           payer: payer.toString(),
-          isPNFT: true
+          isPNFT: true,
+          previousOwner,
+          debtAtTimeOfLiquidation
         });
 
         await liquidation.save().then((res) => {
@@ -84,7 +87,8 @@ const executeBid = async (
           collateralNFTMint: nftMint,
           payer: payer.toString(),
           isPNFT: false,
-          previousOwner
+          previousOwner,
+          debtAtTimeOfLiquidation
         });
 
         await liquidation.save().then((res) => {

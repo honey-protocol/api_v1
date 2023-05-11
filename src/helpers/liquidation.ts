@@ -140,12 +140,11 @@ const initLiquidation = async (
               program,
               wallet,
               markets[i].address.toString(),
-              HONEY_PROGRAM_ID.toString(),
               cluster,
-              nft.toString(),
+              HONEY_PROGRAM_ID.toString(),
               obligation.account.owner.toString(),
-              4
-              // verifiedCreator
+              nft.toString(),
+              totalDebt.uiAmountFloat
             );
           } else {
             const highestBid = sortedBids.pop();
@@ -175,6 +174,7 @@ const initLiquidation = async (
               cluster,
               HONEY_PROGRAM_ID.toString(),
               obligation.account.owner.toString(),
+              totalDebt.uiAmountFloat,
               PNFT_MARKET_IDS_STRING.includes(markets[i].address.toString()),
             );
           }
