@@ -28,6 +28,7 @@ export const HONEY_MARKET_IDS = [
   new PublicKey("7pfaZcAqpWRHpEqGMwPQrn5tj5WVQ48F4PrAtFLuS1P7"), // Drunken Ape Social Club
   new PublicKey("HyUDgtmrERNC6xnPUjxs7fvkB6rX5esqvP5LW4LiXzrV"), // Wolf capital
   new PublicKey("HxuWzw18mR93RmxPkPu8RCD8kjrSJxo7WyaaKHu5NQEZ"), // USDC HB market
+  new PublicKey("2SC72EUqsd5Bax6u6vmmwcGiqjrjZrXJ7S1FsGfL4hBR"), // USDC Mad Lads
 ];
 
 export const MARKET_IDS_STRING: string[] = [
@@ -46,6 +47,7 @@ export const MARKET_IDS_STRING: string[] = [
   "7pfaZcAqpWRHpEqGMwPQrn5tj5WVQ48F4PrAtFLuS1P7",
   "HyUDgtmrERNC6xnPUjxs7fvkB6rX5esqvP5LW4LiXzrV",
   "HxuWzw18mR93RmxPkPu8RCD8kjrSJxo7WyaaKHu5NQEZ",
+  "2SC72EUqsd5Bax6u6vmmwcGiqjrjZrXJ7S1FsGfL4hBR"
 ];
 
 // Case-sensitive
