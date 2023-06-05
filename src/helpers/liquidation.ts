@@ -118,9 +118,18 @@ console.log("wallet and program not ready yet");
           obligation.account?.loans[0]?.amount,
           -reserveInfo.exponent
         );
-        const totalDebt = loanNoteBalance
-          .mulb(marketReserveInfo[0].loanNoteExchangeRate)
-          .divb(new BN(Math.pow(10, 15)).mul(new BN(Math.pow(10, 6))));
+        let totalDebt;
+        // we need to validate if market is SOL (9 decimals) or USDC (6 decimals)
+        // if 6 decimals we need to add in additional divby 10^3
+        if (reserveInfo.exponent === -6) {
+          totalDebt = loanNoteBalance
+            .mulb(marketReserveInfo[0].loanNoteExchangeRate)
+            .divb(new BN(Math.pow(10, 15)).mul(new BN(Math.pow(10, 6)))).divb(new BN(Math.pow(10, 3)))
+        } else {
+            totalDebt = loanNoteBalance
+              .mulb(marketReserveInfo[0].loanNoteExchangeRate)
+              .divb(new BN(Math.pow(10, 15)).mul(new BN(Math.pow(10, 6))))
+        }
 
         const health: string = getHealthStatus(
           totalDebt.uiAmountFloat,
@@ -128,7 +137,7 @@ console.log("wallet and program not ready yet");
         );
 
         const is_risky =
-          totalDebt.uiAmountFloat / (nftPrice * multiplier) >=
+          totalDebt / (nftPrice * multiplier) >=
           10000 / minCollateralRatio;
 
         if (is_risky) {
@@ -183,7 +192,7 @@ console.log("wallet and program not ready yet");
     }
   }
   } catch (error) {
-        console.log(`Errro running pnft: ${error}`);
+        console.log(`Error running Liquidation: ${error}`);
   }
 };
 
