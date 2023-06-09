@@ -70,7 +70,8 @@ console.log("wallet and program not ready yet");
       liquidatorClient.conn,
       markets[i].nftSwitchboardPriceAggregator
     );
-    const nftPrice = nftPriceUsd / solPriceUsd;
+    // set nft price to be usd if market is usdc | if not set to be 
+    const nftPrice = reserveInfo.exponent === -6 ?  nftPriceUsd : nftPriceUsd / solPriceUsd;
     // declare the array for risky positions
     let riskyPositions: NftPosition[] = [];
     // if there are obligations we need to validate if they are risky
@@ -118,18 +119,9 @@ console.log("wallet and program not ready yet");
           obligation.account?.loans[0]?.amount,
           -reserveInfo.exponent
         );
-        let totalDebt;
-        // we need to validate if market is SOL (9 decimals) or USDC (6 decimals)
-        // if 6 decimals we need to add in additional divby 10^3
-        if (reserveInfo.exponent === -6) {
-          totalDebt = loanNoteBalance
-            .mulb(marketReserveInfo[0].loanNoteExchangeRate)
-            .divb(new BN(Math.pow(10, 15)).mul(new BN(Math.pow(10, 6)))).divb(new BN(Math.pow(10, 3)))
-        } else {
-            totalDebt = loanNoteBalance
-              .mulb(marketReserveInfo[0].loanNoteExchangeRate)
-              .divb(new BN(Math.pow(10, 15)).mul(new BN(Math.pow(10, 6))))
-        }
+        const totalDebt = loanNoteBalance
+          .mulb(marketReserveInfo[0].loanNoteExchangeRate)
+          .divb(new BN(Math.pow(10, 15)).mul(new BN(Math.pow(10, 6))))
 
         const health: string = getHealthStatus(
           totalDebt.uiAmountFloat,
@@ -137,7 +129,7 @@ console.log("wallet and program not ready yet");
         );
 
         const is_risky =
-          totalDebt / (nftPrice * multiplier) >=
+          totalDebt.uiAmountFloat / (nftPrice * multiplier) >=
           10000 / minCollateralRatio;
 
         if (is_risky) {
