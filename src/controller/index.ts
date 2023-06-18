@@ -47,10 +47,7 @@ const handleUpdateMarket = async (req: Request, res: Response, next: NextFunctio
   // get market id
   const marketId = req.body.marketId;
   // return error if not found
-  if (!marketId) return {
-    status: 'Failed',
-    message: 'Please provide a market id'
-  }
+  if (!marketId) return res.json({status: 'Failed', message: 'Please provide a market id'});
 
   try {
     // validate if market ID is an active honey market 
@@ -90,18 +87,15 @@ const handleUpdateMarket = async (req: Request, res: Response, next: NextFunctio
 const handleFetchMarketLiquidations = async (req: Request, res: Response, next: NextFunction) => {
   const marketId = req.params.marketId ? req.params.marketId : false;
   // return error if not found
-  if (!marketId) return {
-    status: 'Failed',
-    message: 'Please provide a market id'
-  }
+  if (!marketId) return res.json({status: 'Failed', message: 'Please provide a market id'});
 
   try {
     // validate if market ID is an active honey market
     if (MARKET_IDS_STRING.includes(marketId)) {
       const marketLiquidations = await LiquidationModel.find({ marketId });
-      res.json(marketLiquidations);
+      return res.json(marketLiquidations);
     } else {
-      res.json({status: 'Failed', message: 'Not an active Honeymarket'});
+      return res.json({status: 'Failed', message: 'Not an active Honeymarket'});
     }
   } catch (error) {
     console.log(`Error fetching liquidations for market ${marketId}: ${error}`);
@@ -138,11 +132,32 @@ const fetchMarketLevelData = async (req: Request, res: Response, next: NextFunct
   }
 }
 
+const fetchSingleMarketLevelData = async (req: Request, res: Response, next: NextFunction) => {
+  const marketId = req.params.marketId ? req.params.marketId : false;
+  // return error if not found
+  if (!marketId) return res.json({status: 'Failed', message: 'Not an active Honeymarket'});
+
+  try {
+    // validate if market ID is an active honey market
+    if (MARKET_IDS_STRING.includes(marketId)) {
+      const marketLevelData = await FetchedMarketModel.find({marketId});   
+      res.json(marketLevelData);
+    } else {
+      res.json({status: 'Failed', message: 'Not an active Honeymarket'});
+    }
+    
+  } catch (error) {
+    console.log(`Error while fetching market level data: ${error}`);
+    res.json([]);
+  }
+}
+
 export { 
   handleAllMarketsBids, 
   handleSingleMarketBids, 
   handleUpdateMarket,
   handleFetchMarketLiquidations,
   handleFetchMarketsLiquidations,
-  fetchMarketLevelData
+  fetchMarketLevelData,
+  fetchSingleMarketLevelData
 }

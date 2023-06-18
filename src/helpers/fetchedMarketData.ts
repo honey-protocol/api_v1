@@ -46,6 +46,7 @@ async function formatMarketData(marketObject: any) {
     return {
       obligation: pos.obligation,
       debt: pos.debt,
+      nft_mint: pos.nft_mint.toString(),
       owner: pos.owner.toString(),
       ltv: pos.ltv,
       is_healthy: pos.is_healthy,
@@ -93,7 +94,9 @@ const fetchMarketData = async () => {
     try {
       await Promise.all(
         fetchedObjects.map(async (market) => {
-          const existingMarket = await FetchedMarketModel.findOne({ marketId: market.market.address.toString() });
+          const existingMarket = await FetchedMarketModel.findOne(
+            { marketId: market.market.address.toString() }
+          );
           if (existingMarket) {
             existingMarket.data = await formatMarketData(market);
             await existingMarket.save();

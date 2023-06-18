@@ -17,6 +17,7 @@ interface FetchedMarketM {
 
     }
 }
+
 // init the schema based on interface
 const fetchedMarketSchema = new Schema < FetchedMarketM > ({
   marketId: {
@@ -69,8 +70,22 @@ const fetchedMarketSchema = new Schema < FetchedMarketM > ({
       required: false
     },
     positions: {
-      type: [],
-      required: false
+      type: [
+        {
+          obligation: String,
+          debt: Number,
+          nft_mint: String,
+          owner: String,
+          ltv: Number,
+          is_healthy: String,
+          highest_bid: {
+            type: Number,
+            required: false,
+          },
+          verifiedCreator: String,
+        },
+      ],
+      required: false,
     },
   }
 })
