@@ -18,58 +18,64 @@ import {
  * @returns object for FED to use
 */
 async function formatMarketData(marketObject: any) {
-  const marketId = marketObject.market.address.toString();
-  const { utilization, interestRate } =
-    await marketObject.reserves[0].getUtilizationAndInterestRate();
-  
-  const {outstandingDebt} =
-    await marketObject.reserves[0].getReserveState();
-  
-  const {totalDeposits} =
-    await marketObject.reserves[0].getReserveState();
-  
-  const nftPrice = await marketObject.market.fetchNFTFloorPriceInReserve(
-    0
-  );
-  const allowanceAndDebt = await marketObject.user.fetchAllowanceAndDebt(
-    0,
-    'mainnet-beta'
-  );
+  try {
+    const marketId = marketObject.market.address.toString();
+    const { utilization, interestRate } =
+      await marketObject.reserves[0].getUtilizationAndInterestRate();
+    
+    const {outstandingDebt} =
+      await marketObject.reserves[0].getReserveState();
+    
+    const {totalDeposits} =
+      await marketObject.reserves[0].getReserveState();
+    
+    const nftPrice = await marketObject.market.fetchNFTFloorPriceInReserve(
+      0
+    );
+    const allowanceAndDebt = await marketObject.user.fetchAllowanceAndDebt(
+      0,
+      'mainnet-beta'
+    );
 
-  const allowance = await allowanceAndDebt.allowance;
-  const liquidationThreshold =
-    await allowanceAndDebt.liquidationThreshold;
-  const ltv = await allowanceAndDebt.ltv;
-  const ratio = await allowanceAndDebt.ratio.toString();
+    const allowance = await allowanceAndDebt.allowance;
+    const liquidationThreshold =
+      await allowanceAndDebt.liquidationThreshold;
+    const ltv = await allowanceAndDebt.ltv;
+    const ratio = await allowanceAndDebt.ratio.toString();
 
-  const positions = marketObject.positions.map((pos: any) => {
+    const positions = marketObject.positions.map((pos: any) => {
+      return {
+        obligation: pos.obligation,
+        debt: pos.debt,
+        nft_mint: pos.nft_mint.toString(),
+        owner: pos.owner.toString(),
+        ltv: pos.ltv,
+        is_healthy: pos.is_healthy,
+        highest_bid: pos.highest_bid,
+        verifiedCreator: pos.verifiedCreator.toString()
+      };
+    });
+
     return {
-      obligation: pos.obligation,
-      debt: pos.debt,
-      nft_mint: pos.nft_mint.toString(),
-      owner: pos.owner.toString(),
-      ltv: pos.ltv,
-      is_healthy: pos.is_healthy,
-      highest_bid: pos.highest_bid,
-      verifiedCreator: pos.verifiedCreator.toString()
-    };
-  });
-
-  return {
-    marketId,
-    utilization: utilization,
-    interestRate: interestRate,
-    totalMarketDebt: outstandingDebt,
-    totalMarketDeposits: totalDeposits,
-    // totalMarketValue: totalMarketDebt + totalMarketDeposits,
-    nftPrice: nftPrice,
-    bids: marketObject.bids,
-    allowance,
-    liquidationThreshold,
-    ltv,
-    ratio,
-    positions
-  };
+      marketId,
+      data: {
+        utilization: utilization,
+        interestRate: interestRate,
+        totalMarketDebt: outstandingDebt,
+        totalMarketDeposits: totalDeposits,
+        // totalMarketValue: totalMarketDebt + totalMarketDeposits,
+        nftPrice: nftPrice,
+        bids: marketObject.bids,
+        allowance,
+        liquidationThreshold,
+        ltv,
+        ratio,
+        positions
+      }
+    }; 
+  } catch (error) {
+    console.error(`Error inside format data func: ${error}`);
+  }
 }
 
 /**
