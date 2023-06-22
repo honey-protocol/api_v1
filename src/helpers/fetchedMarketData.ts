@@ -104,7 +104,7 @@ const fetchMarketData = async () => {
             { marketId: market.market.address.toString() }
           );
           if (existingMarket) {
-            existingMarket.data = await formatMarketData(market);
+            existingMarket.data = (await formatMarketData(market)).data;
             await existingMarket.save();
             return;
           } else {
