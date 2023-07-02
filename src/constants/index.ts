@@ -33,6 +33,8 @@ export const HONEY_MARKET_IDS = [
   new PublicKey("4RNS5Z4oMbn6eDAjqLmaKbrpuwExg3sHkRg7FYCZ5HQS"), // SOL Clayno
   new PublicKey("5rXuse6cWigMMNw9fRZMZXGmD2rV7RLpiettBwGKcXm7"), // Ubik/SOL
   new PublicKey("A5FZGzNiHZEJ8qxzMjUs2Dxtz8oFi2wTrrvhoxYH3e7m"), // USDC LIfinity
+  new PublicKey("A7QtyzBeCjZHAD9X4Yfkqh2terwZaQj5erPZWEJKWwzo"), // USDC SMB
+  new PublicKey("HwnSuvkZYQyqSPiecuP4rEPCXRV6oyXz2mVormPP5QjN"), // USDC Fat Cats
 ];
 
 export const MARKET_IDS_STRING: string[] = [
@@ -55,7 +57,9 @@ export const MARKET_IDS_STRING: string[] = [
   "JD2mMtsdT7fTkWojVLh2rjMZBLnKUev7JSn6iLg7chM7",
   "4RNS5Z4oMbn6eDAjqLmaKbrpuwExg3sHkRg7FYCZ5HQS",
   "5rXuse6cWigMMNw9fRZMZXGmD2rV7RLpiettBwGKcXm7",
-  "A5FZGzNiHZEJ8qxzMjUs2Dxtz8oFi2wTrrvhoxYH3e7m"
+  "A5FZGzNiHZEJ8qxzMjUs2Dxtz8oFi2wTrrvhoxYH3e7m",
+  "A7QtyzBeCjZHAD9X4Yfkqh2terwZaQj5erPZWEJKWwzo",
+  "HwnSuvkZYQyqSPiecuP4rEPCXRV6oyXz2mVormPP5QjN"
 ];
 
 // Case-sensitive
