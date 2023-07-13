@@ -164,7 +164,7 @@ const initProgram = async () => {
   // call loadmarkets
   loadMarkets().then((markets) => {
     console.log("@@-- init markets");
-    cron.schedule("*/1 * * * *", async () => {
+    cron.schedule("*/2 * * * *", async () => {
       await initLiquidation(markets, wallet, program).catch((e) => {
         console.log(`Error executing liquidation: ${e}`);
       });
