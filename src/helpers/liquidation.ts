@@ -19,6 +19,7 @@ import { fetchBidsOnChain } from "../helpers";
 import { BN } from "@project-serum/anchor";
 import { executeBid } from "../utils/liquidations/executeBid";
 import { elixirLiquidate } from "../utils/liquidations/elixirLiquidate";
+import { NATIVE_MINT } from "@solana/spl-token";
 
 const cluster = "mainnet-beta";
 const initLiquidation = async (
@@ -74,6 +75,7 @@ console.log("wallet and program not ready yet");
     const nftPrice = reserveInfo.exponent === -6 ?  nftPriceUsd : nftPriceUsd / solPriceUsd;
     // declare the array for risky positions
     let riskyPositions: NftPosition[] = [];
+
     // if there are obligations we need to validate if they are risky
     if (obligations) {
       // loop through each obligation
@@ -119,70 +121,145 @@ console.log("wallet and program not ready yet");
           obligation.account?.loans[0]?.amount,
           -reserveInfo.exponent
         );
-        const totalDebt = loanNoteBalance
+
+        let totalDebt = loanNoteBalance
           .mulb(marketReserveInfo[0].loanNoteExchangeRate)
           .divb(new BN(Math.pow(10, 15)).mul(new BN(Math.pow(10, 6))))
-
+        
+        // check if USDC market or SOL - if USDC, we divide totalDebt.uiAmountFloat by 1000
+        if (reserveInfo.tokenMint.toString() != NATIVE_MINT.toString()) {
+          totalDebt.uiAmountFloat = totalDebt.uiAmountFloat / 10**3;
+        }
+        
+        // TODO: should be removed - is not scoped to USDC market
         const health: string = getHealthStatus(
           totalDebt.uiAmountFloat,
           nftPrice
         );
 
+        // // obligations.map((obligation) => {
+        //   if (obligation.account.owner.toString()  === '9LqWBRfn2UJ7WF4v6NhEsYQD79iMkCLujCSj8KfXJua2') {
+        //       console.log('@@-- obligation debt', totalDebt.uiAmountFloat);
+        //       console.log('@@-- nft price', nftPrice.toString());
+        //       console.log('@@-- multiplier', multiplier);
+        //       console.log('@@-- min coll ratio', minCollateralRatio);
+        //   }
+
         const is_risky =
           totalDebt.uiAmountFloat / (nftPrice * multiplier) >=
           10000 / minCollateralRatio;
-
+        
+          // if (obligation.account.owner.toString() === '9LqWBRfn2UJ7WF4v6NhEsYQD79iMkCLujCSj8KfXJua2') {
+          //   console.log('@@-- is risky', is_risky, totalDebt.uiAmountFloat)
+          // }
+          
         if (is_risky) {
-          if (totalDebt.uiAmountFloat > sortedBids[0].bidLimit) {
-            // if there is no bid, execute solvent liquidation
-            console.log("executing elixir liquidation");
-            await elixirLiquidate(
-              provider,
-              program,
-              wallet,
-              markets[i].address.toString(),
-              cluster,
-              HONEY_PROGRAM_ID.toString(),
-              obligation.account.owner.toString(),
-              nft.toString(),
-              totalDebt.uiAmountFloat
-            );
-          } else {
-            const highestBid = sortedBids.pop();
-            // TODO: @yuri - why default ltv of 40?
-            let position: NftPosition = {
-              obligation: obligation.publicKey.toString(),
-              debt: totalDebt.uiAmountFloat,
-              nft_mint: new PublicKey(nft),
-              owner: obligation.account.owner,
-              ltv: 40,
-              is_healthy: health,
-              highest_bid: highestBid.bidLimit,
-            };
+          if (reserveInfo.tokenMint.toString() != NATIVE_MINT.toString()) {
+            console.log('@@-- USDC market liquidation');
+            if (totalDebt.uiAmountFloat > sortedBids[0].bidLimit) {
+                // if there is no bid, execute solvent liquidation
+                // console.log("executing elixir liquidation");
+                // await elixirLiquidate(
+                //   provider,
+                //   program,
+                //   wallet,
+                //   markets[i].address.toString(),
+                //   cluster,
+                //   HONEY_PROGRAM_ID.toString(),
+                //   obligation.account.owner.toString(),
+                //   nft.toString(),
+                //   totalDebt.uiAmountFloat
+                // );
+                return;
+            } else {
+                console.log('@@-- liquidate non SOL market', obligation)
+                const highestBid = sortedBids.pop();
+                // TODO: @yuri - why default ltv of 40?
+                let position: NftPosition = {
+                  obligation: obligation.publicKey.toString(),
+                  debt: totalDebt.uiAmountFloat,
+                  nft_mint: new PublicKey(nft),
+                  owner: obligation.account.owner,
+                  ltv: 40,
+                  is_healthy: health,
+                  highest_bid: highestBid.bidLimit / 10**6,
+                };
 
-            riskyPositions.push(position);
-            console.log("execute auction liquidation");
+                riskyPositions.push(position);
+                console.log("execute auction liquidation");
 
-            await executeBid(
-              liquidatorClient,
-              markets[i].address.toString(),
-              position.obligation,
-              marketReserveInfo[0].reserve.toString(),
-              obligation.account.collateralNftMint[0].toString(),
-              highestBid.bid,
-              wallet.publicKey,
-              wallet,
-              cluster,
-              HONEY_PROGRAM_ID.toString(),
-              obligation.account.owner.toString(),
-              totalDebt.uiAmountFloat,
-              PNFT_MARKET_IDS_STRING.includes(markets[i].address.toString()),
-            );
+                await executeBid(
+                  liquidatorClient,
+                  markets[i].address.toString(),
+                  position.obligation,
+                  marketReserveInfo[0].reserve.toString(),
+                  obligation.account.collateralNftMint[0].toString(),
+                  (highestBid.bid / 10**6).toString(),
+                  wallet.publicKey,
+                  wallet,
+                  cluster,
+                  HONEY_PROGRAM_ID.toString(),
+                  obligation.account.owner.toString(),
+                  totalDebt.uiAmountFloat,
+                  PNFT_MARKET_IDS_STRING.includes(markets[i].address.toString()),
+                );
+            }
+          }
+            else {
+              if (totalDebt.uiAmountFloat > sortedBids[0].bidLimit) {
+                // if there is no bid, execute solvent liquidation
+                // console.log("executing elixir liquidation");
+                // await elixirLiquidate(
+                //   provider,
+                //   program,
+                //   wallet,
+                //   markets[i].address.toString(),
+                //   cluster,
+                //   HONEY_PROGRAM_ID.toString(),
+                //   obligation.account.owner.toString(),
+                //   nft.toString(),
+                //   totalDebt.uiAmountFloat
+                // );
+                return;
+              } else {
+                  console.log('@@-- liquidate SOL market', obligation)
+                  const highestBid = sortedBids.pop();
+                  // TODO: @yuri - why default ltv of 40?
+                  let position: NftPosition = {
+                    obligation: obligation.publicKey.toString(),
+                    debt: totalDebt.uiAmountFloat,
+                    nft_mint: new PublicKey(nft),
+                    owner: obligation.account.owner,
+                    ltv: 40,
+                    is_healthy: health,
+                    highest_bid: highestBid.bidLimit,
+                  };
+
+                  riskyPositions.push(position);
+                  console.log("execute auction liquidation");
+
+                  await executeBid(
+                    liquidatorClient,
+                    markets[i].address.toString(),
+                    position.obligation,
+                    marketReserveInfo[0].reserve.toString(),
+                    obligation.account.collateralNftMint[0].toString(),
+                    // (highestBid.bid / 10**6).toString(),
+                    highestBid.bid,
+                    wallet.publicKey,
+                    wallet,
+                    cluster,
+                    HONEY_PROGRAM_ID.toString(),
+                    obligation.account.owner.toString(),
+                    totalDebt.uiAmountFloat,
+                    PNFT_MARKET_IDS_STRING.includes(markets[i].address.toString()),
+                  );
+                }
+              }
           }
         }
       }
     }
-  }
   } catch (error) {
         console.log(`Error running Liquidation: ${error}`);
   }

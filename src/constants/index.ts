@@ -17,8 +17,6 @@ export const HONEY_MARKET_IDS = [
   new PublicKey("Bw77MGpg189EaATjN67WXcnp3c4544LhKoV4Ftmdg4C"), // Pesky Penguins
   new PublicKey("H2H2pJuccdvpET9A75ajB3GgdYdCUL4T3kiwUMA6DJ7q"), // Lifinity flares
   new PublicKey("Bxk1JQCbVjpeFnjzvH5n9bepnZeHjRADUFwZiVC7L5Gq"), // OG Atadians
-  // new PublicKey("F8rZviSSuqgkTsjMeoyrTUSNSqh7yNDCAozJkxm7eujY"), // Burrito
-  // new PublicKey("GrKPvcdHVb4cwR5a2CCgCTvdkSqhNDRgSUiUVzXRWLk6"), // Blocksmith
   new PublicKey("5UKRRSxbi4PgPnQU2ZqtukUxd1fyN6ydn1hoxivP46A8"), // Ovols
   new PublicKey("GAqyPziKPwVpwKaeqPhEsxiy6MwQ2bvtodruWErpLVKo"), // Droids
   new PublicKey("2dxJ4eMkhMxm1ZqpAhKsjunvyziuq1JRnuHaqKFRY8et"), // Vandals
@@ -42,8 +40,6 @@ export const MARKET_IDS_STRING: string[] = [
   "Bw77MGpg189EaATjN67WXcnp3c4544LhKoV4Ftmdg4C",
   "H2H2pJuccdvpET9A75ajB3GgdYdCUL4T3kiwUMA6DJ7q",
   "Bxk1JQCbVjpeFnjzvH5n9bepnZeHjRADUFwZiVC7L5Gq",
-  // "F8rZviSSuqgkTsjMeoyrTUSNSqh7yNDCAozJkxm7eujY",
-  // "GrKPvcdHVb4cwR5a2CCgCTvdkSqhNDRgSUiUVzXRWLk6",
   "5UKRRSxbi4PgPnQU2ZqtukUxd1fyN6ydn1hoxivP46A8",
   "GAqyPziKPwVpwKaeqPhEsxiy6MwQ2bvtodruWErpLVKo",
   "2dxJ4eMkhMxm1ZqpAhKsjunvyziuq1JRnuHaqKFRY8et",
