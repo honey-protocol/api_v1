@@ -61,15 +61,16 @@ const handleUpdateMarket = async (req: Request, res: Response, next: NextFunctio
       });
       // validate if market exists
       const existingMarket = await Market.exists({ marketId: req.body.marketId });
+      let existingMarketValue = existingMarket ? true : false
       // update if exists or create new market
       if (existingMarket) {
-        await Market.findOneAndUpdate({ marketId: req.body.marketId}, { bids });
+        await Market.findOneAndUpdate({ marketId: req.body.marketId}, { bids: bids });
       } else {
         await market.save();
       }
       res.json({
         status: 'Success',
-        message: 'Marketdata updated'
+        message: `Marketdata updated: existing market: ${existingMarketValue}`;
       });
     } else {
         res.json({ status: 'Failed', message: 'Not an active Honeymarket' });
