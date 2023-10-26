@@ -57,7 +57,7 @@ console.log("wallet and program not ready yet");
     // fetching bids on chain
     const bids = await fetchBidsOnChain(markets[i].address);
     // sorts bids by amount
-    const sortedBids = bids.sort((a, b) => a.bidLimit - b.bidLimit);
+    const sortedBids = bids.sort((a, b) => b.bidLimit - a.bidLimit);
     // fetch all obligations of a specific market
     let obligations = await markets[i].fetchObligations();
     // fetch oracle prices
@@ -145,13 +145,19 @@ console.log("wallet and program not ready yet");
         //       console.log('@@-- min coll ratio', minCollateralRatio);
         //   }
 
+        const val = totalDebt.uiAmountFloat
+
         const is_risky =
           totalDebt.uiAmountFloat / (nftPrice * multiplier) >=
           10000 / minCollateralRatio;
+
+          // console.log({ val, nftPrice, multiplier, minCollateralRatio })
         
           // if (obligation.account.owner.toString() === '9LqWBRfn2UJ7WF4v6NhEsYQD79iMkCLujCSj8KfXJua2') {
           //   console.log('@@-- is risky', is_risky, totalDebt.uiAmountFloat)
           // }
+
+          console.log('@@-- IS RISKY', is_risky)
           
         if (is_risky) {
           if (reserveInfo.tokenMint.toString() != NATIVE_MINT.toString()) {
@@ -186,7 +192,7 @@ console.log("wallet and program not ready yet");
                 };
 
                 riskyPositions.push(position);
-                console.log("execute auction liquidation");
+                // console.log("execute auction liquidation");
 
                 await executeBid(
                   liquidatorClient,
@@ -206,7 +212,9 @@ console.log("wallet and program not ready yet");
             }
           }
             else {
+              // console.log('@@-- sorted bids', sortedBids)
               if (totalDebt.uiAmountFloat > sortedBids[0].bidLimit) {
+                // console.log('@@-- ui amount > sortedBids', sortedBids[0].bidLimit, totalDebt.uiAmountFloat)
                 // if there is no bid, execute solvent liquidation
                 // console.log("executing elixir liquidation");
                 // await elixirLiquidate(
