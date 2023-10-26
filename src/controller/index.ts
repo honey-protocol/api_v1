@@ -70,7 +70,7 @@ const handleUpdateMarket = async (req: Request, res: Response, next: NextFunctio
       }
       res.json({
         status: 'Success',
-        message: `Marketdata updated: existing market: ${existingMarketValue}`;
+        message: `Marketdata updated: existing market: ${existingMarketValue}`
       });
     } else {
         res.json({ status: 'Failed', message: 'Not an active Honeymarket' });
