@@ -10,7 +10,7 @@ const executeBid = async (
   obligation: string,
   reserve: string,
   nftMint: string,
-  bid: string,
+  bidObject: any,
   payer: PublicKey,
   wallet: Keypair, 
   env: string, 
@@ -20,8 +20,8 @@ const executeBid = async (
   pnft?: boolean
 ) => {
 
-  try {
-    const bidPK = new PublicKey(bid);
+  try {    
+    const bidPK = new PublicKey(bidObject.bid);
     const nftMintPk = new PublicKey(nftMint);
     const reservePk = new PublicKey(reserve);
     const obligationPk = new PublicKey(obligation);
@@ -29,82 +29,73 @@ const executeBid = async (
     const bidData = await liquidator.program.account.bid.fetch(bidPK);
     const { reserves } = await initWrappers(wallet, env, programId, market);
 
-    // const withdrawSource = await getAssociatedTokenAddress(
-    //     ASSOCIATED_TOKEN_PROGRAM_ID,
-    //     TOKEN_PROGRAM_ID,
-    //     bidMint,
-    //     bidder
-    // );
-
-    console.log('nftMint', nftMintPk.toString());
-    console.log('bidder', bidData.bidder.toString());
-
     const params: ExecuteBidParams = {
-        market: marketPk,
-        obligation: obligationPk,
-        reserve: reservePk,
-        nftMint: nftMintPk,
-        payer,
-        bidder: new PublicKey(bidData.bidder),
-    }
+      market: marketPk,
+      obligation: obligationPk,
+      reserve: reservePk,
+      nftMint: nftMintPk,
+      payer,
+      bidder: new PublicKey(bidData.bidder),
+  }
 
-    if (pnft) {
-      const tx = await liquidator.executePnftBid(reserves, params);
+  if (pnft) {
+    const tx = await liquidator.executePnftBid(reserves, params);
 
-      if (tx[0] === 'FAILED') {
-        console.log(`Liquidation failed`);
-        return;
-      } else {
-        const liquidation = new LiquidationModel({
-          marketId: market,
-          obligationId: obligation,
-          collateralNFTMint: nftMint,
-          payer: payer.toString(),
-          isPNFT: true,
-          previousOwner,
-          debtAtTimeOfLiquidation
-        });
-
-        await liquidation.save().then((res) => {
-          console.log(`Liquidation stored in DB: ${res}`)
-        }).catch((err) => {
-          console.log(`Error storing liquidation ${err}`);
-        })
-        
-        console.log("TxId: ", tx);
-        return;
-      }
-    } else {
-      const tx = await liquidator.executeBid(reserves, params);
-
-      if (tx[0] === 'FAILED') {
-        console.log(`Liquidation failed`);
-        return;
-      } else {
-        const liquidation = new LiquidationModel({
-          marketId: market,
-          obligationId: obligation,
-          collateralNFTMint: nftMint,
-          payer: payer.toString(),
-          isPNFT: false,
-          previousOwner,
-          debtAtTimeOfLiquidation
-        });
-
-        await liquidation.save().then((res) => {
-          console.log(`Liquidation stored in DB: ${res}`)
-        }).catch((err) => {
-          console.log(`Error storing liquidation ${err}`);
-        })
-        
-        console.log("TxId: ", tx);
-        return;
-      }
-    }
-  } catch (error) {
-      console.log(`An error occurred in executing the liquidation: ${error}`);
+    if (tx[0] === 'FAILED') {
+      console.log(`Liquidation failed pNFT`);
       return;
-}
+    } else {
+      const liquidation = new LiquidationModel({
+        marketId: market,
+        obligationId: obligation,
+        collateralNFTMint: nftMint,
+        payer: payer.toString(),
+        isPNFT: true,
+        previousOwner,
+        debtAtTimeOfLiquidation
+      });
+
+      await liquidation.save().then((res) => {
+        console.log(`Liquidation stored in DB: ${res}`)
+      }).catch((err) => {
+        console.log(`Error storing liquidation ${err}`);
+      })
+      
+      console.log("pNFT TxId: ", tx);
+      return;
+    }
+  } else {
+    const bid_escrow = await liquidator.findEscrowAccount(params.market, params.bidder);
+    const tx = await liquidator.executeBid(reserves, params);
+    console.log('@@-- THIS IS TX', tx)
+
+    if (tx[0] === 'FAILED') {
+      console.log(`Liquidation failed nft regular`);
+      return;
+    } else {
+      const liquidation = new LiquidationModel({
+        marketId: market,
+        obligationId: obligation,
+        collateralNFTMint: nftMint,
+        payer: payer.toString(),
+        isPNFT: false,
+        previousOwner,
+        debtAtTimeOfLiquidation
+      });
+
+      await liquidation.save().then((res) => {
+        console.log(`nft Liquidation stored in DB: ${res}`)
+      }).catch((err) => {
+        console.log(`nft Error storing liquidation ${err}`);
+      })
+      
+      console.log("nft TxId: ", tx);
+      return;
+    }
+}} catch (error) {
+  console.log(`An error occurred in executing the liquidation: ${error}`);
+  return; 
+  }
 
 // testing bids
 // async function simulateBid(

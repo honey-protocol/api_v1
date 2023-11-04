@@ -10,7 +10,7 @@ import {
   HoneyReserve,
   PositionInfoList,
 } from "@honey-finance/sdk";
-import { Keypair, PublicKey } from "@solana/web3.js";
+import { Keypair, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import { HONEY_PROGRAM_ID, PNFT_MARKET_IDS_STRING } from "../constants";
 import { initWrappers } from "../utils/initWrappers";
 import { fetchMarketReserveInfo, fetchReserve } from "../utils/programUtils";
@@ -22,6 +22,32 @@ import { elixirLiquidate } from "../utils/liquidations/elixirLiquidate";
 import { NATIVE_MINT } from "@solana/spl-token";
 
 const cluster = "mainnet-beta";
+// filter out closed bid in the bidding array and return the closest bid to the debt amount
+function findClosestBid(bids, debtAmount) {
+  let closestBid = null;
+  let smallestDifference = Infinity;
+
+  bids.forEach(bid => {
+    const bidLimit = parseInt(bid.bidLimit, 10);
+    console.log(`Evaluating bid: ${bid.bid}, bidLimit: ${bidLimit}`);
+
+    if (isNaN(bidLimit)) {
+      console.warn(`Bid limit is not a number for bid: ${bid.bid}`);
+      return; // Skip to the next bid
+    }
+
+    const difference = Math.abs(debtAmount - bidLimit);
+    console.log(`Difference for bid ${bid.bid} is ${difference}`);
+
+    if (difference < smallestDifference) {
+      smallestDifference = difference;
+      closestBid = bid;
+    }
+  });
+
+  return closestBid;
+}
+
 const initLiquidation = async (
   markets: HoneyMarket[],
   wallet: Keypair,
@@ -56,8 +82,7 @@ console.log("wallet and program not ready yet");
     const liquidatorClient = new LiquidatorClient(program);
     // fetching bids on chain
     const bids = await fetchBidsOnChain(markets[i].address);
-    // sorts bids by amount
-    const sortedBids = bids.sort((a, b) => b.bidLimit - a.bidLimit);
+
     // fetch all obligations of a specific market
     let obligations = await markets[i].fetchObligations();
     // fetch oracle prices
@@ -137,50 +162,23 @@ console.log("wallet and program not ready yet");
           nftPrice
         );
 
-        // // obligations.map((obligation) => {
-        //   if (obligation.account.owner.toString()  === '9LqWBRfn2UJ7WF4v6NhEsYQD79iMkCLujCSj8KfXJua2') {
-        //       console.log('@@-- obligation debt', totalDebt.uiAmountFloat);
-        //       console.log('@@-- nft price', nftPrice.toString());
-        //       console.log('@@-- multiplier', multiplier);
-        //       console.log('@@-- min coll ratio', minCollateralRatio);
-        //   }
+        const totalDebtInLamports = new BN(totalDebt.uiAmountFloat * LAMPORTS_PER_SOL);
 
-        const val = totalDebt.uiAmountFloat
-
+        
+        const closestBid = await findClosestBid(bids, totalDebtInLamports);
         const is_risky =
           totalDebt.uiAmountFloat / (nftPrice * multiplier) >=
           10000 / minCollateralRatio;
-
-          // console.log({ val, nftPrice, multiplier, minCollateralRatio })
-        
-          // if (obligation.account.owner.toString() === '9LqWBRfn2UJ7WF4v6NhEsYQD79iMkCLujCSj8KfXJua2') {
-          //   console.log('@@-- is risky', is_risky, totalDebt.uiAmountFloat)
-          // }
-
-          console.log('@@-- IS RISKY', is_risky)
           
         if (is_risky) {
           if (reserveInfo.tokenMint.toString() != NATIVE_MINT.toString()) {
-            console.log('@@-- USDC market liquidation');
-            if (totalDebt.uiAmountFloat > sortedBids[0].bidLimit) {
-                // if there is no bid, execute solvent liquidation
-                // console.log("executing elixir liquidation");
-                // await elixirLiquidate(
-                //   provider,
-                //   program,
-                //   wallet,
-                //   markets[i].address.toString(),
-                //   cluster,
-                //   HONEY_PROGRAM_ID.toString(),
-                //   obligation.account.owner.toString(),
-                //   nft.toString(),
-                //   totalDebt.uiAmountFloat
-                // );
-                return;
+            if (totalDebtInLamports > closestBid.bidLimit) {
+              // if no bid is greater than debt we dont execute liq.
+              return;
             } else {
-                console.log('@@-- liquidate non SOL market', obligation)
-                const highestBid = sortedBids.pop();
-                // TODO: @yuri - why default ltv of 40?
+                // liquidation in non SOL market
+                const highestBid = closestBid
+                
                 let position: NftPosition = {
                   obligation: obligation.publicKey.toString(),
                   debt: totalDebt.uiAmountFloat,
@@ -192,7 +190,6 @@ console.log("wallet and program not ready yet");
                 };
 
                 riskyPositions.push(position);
-                // console.log("execute auction liquidation");
 
                 await executeBid(
                   liquidatorClient,
@@ -212,26 +209,15 @@ console.log("wallet and program not ready yet");
             }
           }
             else {
-              // console.log('@@-- sorted bids', sortedBids)
-              if (totalDebt.uiAmountFloat > sortedBids[0].bidLimit) {
-                // console.log('@@-- ui amount > sortedBids', sortedBids[0].bidLimit, totalDebt.uiAmountFloat)
-                // if there is no bid, execute solvent liquidation
-                // console.log("executing elixir liquidation");
-                // await elixirLiquidate(
-                //   provider,
-                //   program,
-                //   wallet,
-                //   markets[i].address.toString(),
-                //   cluster,
-                //   HONEY_PROGRAM_ID.toString(),
-                //   obligation.account.owner.toString(),
-                //   nft.toString(),
-                //   totalDebt.uiAmountFloat
-                // );
+              if (totalDebtInLamports > closestBid.bidLimit) {
+                // if no bid is greater than debt we dont execute liq.
                 return;
               } else {
-                  console.log('@@-- liquidate SOL market', obligation)
-                  const highestBid = sortedBids.pop();
+
+                  const highestBid = closestBid;
+
+                  if (highestBid.bidLimit == 0) return;
+
                   // TODO: @yuri - why default ltv of 40?
                   let position: NftPosition = {
                     obligation: obligation.publicKey.toString(),
@@ -244,16 +230,13 @@ console.log("wallet and program not ready yet");
                   };
 
                   riskyPositions.push(position);
-                  console.log("execute auction liquidation");
-
                   await executeBid(
                     liquidatorClient,
                     markets[i].address.toString(),
                     position.obligation,
                     marketReserveInfo[0].reserve.toString(),
                     obligation.account.collateralNftMint[0].toString(),
-                    // (highestBid.bid / 10**6).toString(),
-                    highestBid.bid,
+                    highestBid,
                     wallet.publicKey,
                     wallet,
                     cluster,
@@ -261,6 +244,7 @@ console.log("wallet and program not ready yet");
                     obligation.account.owner.toString(),
                     totalDebt.uiAmountFloat,
                     PNFT_MARKET_IDS_STRING.includes(markets[i].address.toString()),
+
                   );
                 }
               }
