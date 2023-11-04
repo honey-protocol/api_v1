@@ -29,15 +29,12 @@ function findClosestBid(bids, debtAmount) {
 
   bids.forEach(bid => {
     const bidLimit = parseInt(bid.bidLimit, 10);
-    console.log(`Evaluating bid: ${bid.bid}, bidLimit: ${bidLimit}`);
 
     if (isNaN(bidLimit)) {
-      console.warn(`Bid limit is not a number for bid: ${bid.bid}`);
       return; // Skip to the next bid
     }
 
     const difference = Math.abs(debtAmount - bidLimit);
-    console.log(`Difference for bid ${bid.bid} is ${difference}`);
 
     if (difference < smallestDifference) {
       smallestDifference = difference;
@@ -68,6 +65,7 @@ console.log("wallet and program not ready yet");
       HONEY_PROGRAM_ID.toString(),
       markets[i].address.toString()
     );
+
     // fetches CachedReserveInfo
     const marketReserveInfo: CachedReserveInfo[] = await fetchMarketReserveInfo(
       client.program,
@@ -106,6 +104,7 @@ console.log("wallet and program not ready yet");
       // loop through each obligation
       for (let index = 0; index < obligations.length; index++) {
         const obligation = obligations[index];
+        console.log('@@-- obligation', obligation.publicKey.toString())
 
         let nftMints: PublicKey[] = obligation.account.collateralNftMint;
         const nft = nftMints[0];
@@ -169,6 +168,8 @@ console.log("wallet and program not ready yet");
         const is_risky =
           totalDebt.uiAmountFloat / (nftPrice * multiplier) >=
           10000 / minCollateralRatio;
+
+          // console.log('@@-- closed bid', closestBid)
           
         if (is_risky) {
           if (reserveInfo.tokenMint.toString() != NATIVE_MINT.toString()) {
@@ -198,7 +199,7 @@ console.log("wallet and program not ready yet");
                   marketReserveInfo[0].reserve.toString(),
                   obligation.account.collateralNftMint[0].toString(),
                   (highestBid.bid / 10**6).toString(),
-                  wallet.publicKey,
+                  new PublicKey(highestBid.bidder),
                   wallet,
                   cluster,
                   HONEY_PROGRAM_ID.toString(),

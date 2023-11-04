@@ -67,7 +67,9 @@ const executeBid = async (
   } else {
     const bid_escrow = await liquidator.findEscrowAccount(params.market, params.bidder);
     const tx = await liquidator.executeBid(reserves, params);
+    console.log('@@-- bid escrow', bid_escrow)
     console.log('@@-- THIS IS TX', tx)
+    console.log('@@-- bid data', bidData)
 
     if (tx[0] === 'FAILED') {
       console.log(`Liquidation failed nft regular`);
