@@ -72,7 +72,7 @@ const executeBid = async (
     console.log('@@-- bid data', bidData)
 
     if (tx[0] === 'FAILED') {
-      console.log(`Liquidation failed nft regular`);
+      console.log(`Liquidation failed nft regular, ${tx}`);
       return;
     } else {
       const liquidation = new LiquidationModel({

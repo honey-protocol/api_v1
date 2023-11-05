@@ -150,6 +150,8 @@ console.log("wallet and program not ready yet");
           .mulb(marketReserveInfo[0].loanNoteExchangeRate)
           .divb(new BN(Math.pow(10, 15)).mul(new BN(Math.pow(10, 6))))
         
+          console.log('@@-- ui amount float', totalDebt.uiAmountFloat)
+          console.log('@@-- ui amount', totalDebt.uiAmount)
         // check if USDC market or SOL - if USDC, we divide totalDebt.uiAmountFloat by 1000
         if (reserveInfo.tokenMint.toString() != NATIVE_MINT.toString()) {
           totalDebt.uiAmountFloat = totalDebt.uiAmountFloat / 10**3;
