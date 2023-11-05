@@ -199,7 +199,7 @@ console.log("wallet and program not ready yet");
                   marketReserveInfo[0].reserve.toString(),
                   obligation.account.collateralNftMint[0].toString(),
                   (highestBid.bid / 10**6).toString(),
-                  new PublicKey(highestBid.bidder),
+                  wallet.publicKey, // new PublicKey(highestBid.bidder),
                   wallet,
                   cluster,
                   HONEY_PROGRAM_ID.toString(),
